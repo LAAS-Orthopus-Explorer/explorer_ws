@@ -10,13 +10,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/visual/base_link.dae"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/visual/base_link.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/collision/base_link.stl"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/collision/base_link.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -28,13 +28,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/visual/link1.dae"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/visual/link1.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/collision/link1.stl"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/collision/link1.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -46,13 +46,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/visual/link2.dae"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/visual/link2.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/collision/link2.stl"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/collision/link2.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -64,13 +64,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/visual/link3.dae"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/visual/link3.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/collision/link3.stl"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/collision/link3.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -82,13 +82,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/visual/link4_old.dae"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/visual/link4_old.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/collision/link4_old.stl"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/collision/link4_old.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -100,13 +100,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/visual/link5_old.dae"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/visual/link5_old.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/collision/link5_old.stl"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/collision/link5_old.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -118,13 +118,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/visual/gripper.dae"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/visual/gripper.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ros2_control_explorer/description/meshes/collision/gripper.stl"/>
+        <mesh filename="file:///home/orthopus/explorer_ws/install/ros2_control_explorer/share/ros2_control_explorer/description/meshes/collision/gripper.stl"/>
       </geometry>
     </collision>
     <inertial>
