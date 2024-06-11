@@ -85,15 +85,15 @@
   <joint name="joint_2" type="revolute">
     <parent link="link_1"/>
     <child link="link_2"/>
-    <origin xyz="0 24.5 58.952" rpy="${pi/2} 0 0"/>
+    <origin xyz="0 24.5 58.952" rpy="${pi/2} ${-pi/2} 0"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000.0" lower="0" upper="${pi}" velocity="2.5"/>
+    <limit effort="1000.0" lower="${-pi/2}" upper="${pi/2}" velocity="2.5"/>
   </joint>
 
   <joint name="joint_3" type="revolute">
     <parent link="link_2"/>
     <child link="link_3"/>
-    <origin xyz="409.872 0 -2" rpy="${pi} 0 0"/>
+    <origin xyz="409.872 0 -2" rpy="${pi} 0 ${-pi/2}"/>
     <axis xyz="0 0 1"/>
     <limit effort="1000.0" lower="${-pi}" upper="${pi}" velocity="2.5"/>
   </joint>

@@ -1,0 +1,26 @@
+ros2 launch ros2_control_explorer explorer_controller.launch.py
+
+
+ros2 launch ros2_control_explorer explorer.launch.py
+
+
+ros2 launch ros2_control_explorer explorer_gazebo_classic.launch.py gui:=true
+
+ros2 launch ros2_control_explorer send_trajectory.launch.py
+
+ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "data:
+- 0.5
+- 0.5
+- 0.5
+- 0.5
+- 0.5
+- 0.5"
+
+ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "data:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0"
+
