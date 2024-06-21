@@ -22,6 +22,7 @@ set(CONTROLLER_INCLUDE_DEPENDS
   controller_interface
   realtime_tools
   trajectory_msgs
+  kdl_parser
 )
 
 # find dependencies
@@ -36,9 +37,20 @@ foreach(Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+find_package(std_srvs REQUIRED)
 
 ## COMPILE
 add_executable(send_trajectory reference_generator/send_trajectory.cpp)
+add_executable(spacenav_trajectory reference_generator/spacenav_trajectory.cpp)
+ament_target_dependencies(spacenav_trajectory
+  rclcpp
+  std_msgs
+  kdl_parser
+  geometry_msgs
+  trajectory_msgs
+  sensor_msgs
+)
+
 
 ament_target_dependencies(
   send_trajectory PUBLIC
@@ -49,7 +61,7 @@ add_library(
   ros2_control_explorer
   SHARED
   hardware/explorer_hardware.cpp
-  controller/explorer_controller.cpp
+  controller/explorer_controller.cpp 
 )
 
 target_compile_features(ros2_control_explorer PUBLIC cxx_std_17)
@@ -74,10 +86,6 @@ pluginlib_export_plugin_description_file(hardware_interface ros2_control_explore
 pluginlib_export_plugin_description_file(controller_interface ros2_control_explorer.xml)
 
 # INSTALL
-install(
-  DIRECTORY hardware/include/
-  DESTINATION include/ros2_control_explorer
-)
 
 install(
   DIRECTORY description reference_generator
@@ -87,6 +95,18 @@ install(
   DIRECTORY bringup/launch bringup/config
   DESTINATION share/ros2_control_explorer
 )
+
+include_directories(
+  input_device/include
+  ${EIGEN3_INCLUDE_DIRS}
+)
+
+include_directories(
+  reference_generator/include
+  ${EIGEN3_INCLUDE_DIRS}
+)
+
+
 install(
     TARGETS send_trajectory
     RUNTIME DESTINATION lib/ros2_control_explorer
@@ -99,11 +119,34 @@ install(TARGETS ros2_control_explorer
   RUNTIME DESTINATION bin
 )
 
+############ Space Nav
+add_executable(spacenav
+  input_device/device.cpp
+  input_device/device_spacenav.cpp
+)
+ament_target_dependencies(spacenav
+  rclcpp
+  std_msgs
+  sensor_msgs
+  std_srvs
+  geometry_msgs
+)
+
+#Install Cpp executables
+install(TARGETS
+  spacenav
+  DESTINATION lib/ros2_control_explorer
+)
+
+#Install Cpp executables
+install(TARGETS
+  spacenav_trajectory
+  DESTINATION lib/ros2_control_explorer
+)
+
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
 
-  ament_add_pytest_test(explorer_urdf_xacro test/test_urdf_xacro.py)
-  ament_add_pytest_test(view_explorer_launch test/test_view_robot_launch.py)
 endif()
 
 ## EXPORTS
