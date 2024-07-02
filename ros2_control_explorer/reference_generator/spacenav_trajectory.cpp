@@ -17,7 +17,7 @@ namespace space_control
         joint_positions = KDL::JntArray(chain.getNrOfJoints());
         joint_velocities = KDL::JntArray(chain.getNrOfJoints());
 
-        max_vel = 50;
+        max_vel = 0.05;
 
         ik_vel_solver_ = std::make_shared<KDL::ChainIkSolverVel_pinv>(chain, 0.0000001);
 

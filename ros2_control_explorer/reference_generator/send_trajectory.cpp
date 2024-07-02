@@ -70,8 +70,8 @@ int main(int argc, char ** argv)
   {
     // set endpoint twist
     double t = i;
-    twist.vel.y(100 * cos(2 * M_PI * t / trajectory_len));
-    twist.vel.z(-100 * sin(2 * M_PI * t / trajectory_len));
+    twist.vel.y(0.1 * cos(2 * M_PI * t / trajectory_len));
+    twist.vel.z(-0.1 * sin(2 * M_PI * t / trajectory_len));
 
     // convert cart to joint velocities
     ik_vel_solver_->CartToJnt(joint_positions, twist, joint_velocities);
