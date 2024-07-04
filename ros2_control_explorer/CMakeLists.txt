@@ -14,15 +14,18 @@ set(HW_IF_INCLUDE_DEPENDS
 set(REF_GEN_INCLUDE_DEPENDS
   kdl_parser
   rclcpp
+  std_msgs
   trajectory_msgs
+  sensor_msgs
+  std_srvs
+  geometry_msgs
+  trac_ik_lib
 )
 set(CONTROLLER_INCLUDE_DEPENDS
   pluginlib
   rcpputils
   controller_interface
   realtime_tools
-  trajectory_msgs
-  kdl_parser
 )
 
 # find dependencies
@@ -37,21 +40,22 @@ foreach(Dependency IN ITEMS ${CONTROLLER_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
-find_package(std_srvs REQUIRED)
 
 ## COMPILE
-add_executable(send_trajectory reference_generator/send_trajectory.cpp)
+
 add_executable(spacenav_trajectory reference_generator/spacenav_trajectory.cpp)
-ament_target_dependencies(spacenav_trajectory
-  rclcpp
-  std_msgs
-  kdl_parser
-  geometry_msgs
-  trajectory_msgs
-  sensor_msgs
+ament_target_dependencies(
+  spacenav_trajectory PUBLIC
+  ${REF_GEN_INCLUDE_DEPENDS}
 )
 
+add_executable(spacenav_trajectory_ik reference_generator/spacenav_trajectory_ik.cpp)
+ament_target_dependencies(
+  spacenav_trajectory_ik PUBLIC
+  ${REF_GEN_INCLUDE_DEPENDS}
+)
 
+add_executable(send_trajectory reference_generator/send_trajectory.cpp)
 ament_target_dependencies(
   send_trajectory PUBLIC
   ${REF_GEN_INCLUDE_DEPENDS}
@@ -102,10 +106,14 @@ include_directories(
 )
 
 include_directories(
-  reference_generator/include
+  robot_manager/include
   ${EIGEN3_INCLUDE_DIRS}
 )
 
+include_directories(
+  reference_generator/include
+  ${EIGEN3_INCLUDE_DIRS}
+)
 
 install(
     TARGETS send_trajectory
@@ -141,6 +149,7 @@ install(TARGETS
 #Install Cpp executables
 install(TARGETS
   spacenav_trajectory
+  spacenav_trajectory_ik
   DESTINATION lib/ros2_control_explorer
 )
 

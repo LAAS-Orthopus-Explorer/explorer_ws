@@ -66,6 +66,12 @@ You should see the robot making a circular motion in RViz and Gazebo.
 
 You can move the robot with cartesian control using a 3D mouse or the GUI by launching this command. (it is not working fine though)
 
+* With KDL Solver
 ```
 ros2 launch ros2_control_explorer explorer_spacenav.launch.py gui:=true
+```
+
+* With TRAC-IK Solver
+```
+ros2 launch ros2_control_explorer explorer_spacenav_ik.launch.py gui:=true
 ```
