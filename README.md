@@ -76,6 +76,11 @@ ros2 launch ros2_control_explorer explorer_spacenav.launch.py gui:=true
 ros2 launch ros2_control_explorer explorer_spacenav_ik.launch.py gui:=true
 ```
 
+* With a QP
+```
+ros2 launch ros2_control_explorer explorer_spacenav_qp.launch.py gui:=true
+```
+
 Start the MoveIt demo to interactively plan and execute motions for the robot in RViz.
 ```
 ros2 launch explorer_moveit_config demo.launch.py

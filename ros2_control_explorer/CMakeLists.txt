@@ -18,6 +18,12 @@ set(REF_GEN_INCLUDE_DEPENDS
   trajectory_msgs
   sensor_msgs
   std_srvs
+  moveit_core
+  moveit_ros_planning
+  moveit_ros_planning_interface
+  Eigen3
+  qpoases_ros2
+  custom_interfaces
   geometry_msgs
   trac_ik_lib
 )
@@ -52,6 +58,18 @@ ament_target_dependencies(
 add_executable(spacenav_trajectory_ik reference_generator/spacenav_trajectory_ik.cpp)
 ament_target_dependencies(
   spacenav_trajectory_ik PUBLIC
+  ${REF_GEN_INCLUDE_DEPENDS}
+)
+
+add_executable(spacenav_trajectory_qp 
+  reference_generator/spacenav_trajectory_qp.cpp
+  robot_manager/forward_kinematic.cpp
+  robot_manager/inverse_kinematic.cpp
+  robot_manager/velocity_integrator.cpp
+  robot_manager/types/space_base.cpp
+)
+ament_target_dependencies(
+  spacenav_trajectory_qp PUBLIC
   ${REF_GEN_INCLUDE_DEPENDS}
 )
 
@@ -150,6 +168,7 @@ install(TARGETS
 install(TARGETS
   spacenav_trajectory
   spacenav_trajectory_ik
+  spacenav_trajectory_qp
   DESTINATION lib/ros2_control_explorer
 )
 
