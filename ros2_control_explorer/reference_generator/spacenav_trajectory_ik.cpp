@@ -14,8 +14,7 @@ namespace space_control
 
         kdl_parser::treeFromString(robot_description, robot_tree);
         robot_tree.getChain("base_link", "tool0", chain);
-        
-        state = 0;
+
         
         q_actual = KDL::JntArray(chain.getNrOfJoints());
         q_desired = KDL::JntArray(chain.getNrOfJoints());
@@ -32,6 +31,13 @@ namespace space_control
         q_actual.data[3] = 0.0;
         q_actual.data[4] = 0.0;
         q_actual.data[5] = 0.0;
+
+        q_desired.data[0] = 0.0;
+        q_desired.data[1] = 0.0;
+        q_desired.data[2] = 0.0;
+        q_desired.data[3] = 0.0;
+        q_desired.data[4] = 0.0;
+        q_desired.data[5] = 0.0;
 
         fk_solver_->JntToCart(q_actual, desired_pose);
     
@@ -62,7 +68,6 @@ namespace space_control
 
         command_pub_ = n_->create_publisher<trajectory_msgs::msg::JointTrajectory>("/explorer_controller/joint_trajectory", 10);
         trajectory_sub_ = n_->create_subscription<geometry_msgs::msg::TwistStamped>("/ros2_control_explorer/input_device_velocity", 10, std::bind(&SpacenavTrajectory::callback, this, std::placeholders::_1));
-        positions_sub_ = n_->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10, std::bind(&SpacenavTrajectory::callback_pos, this, std::placeholders::_1));
         timer_ = n_->create_wall_timer(1ms, std::bind(&SpacenavTrajectory::timer_callback, this));
     }
 
@@ -71,76 +76,68 @@ namespace space_control
         twist_command = msg;
     }
 
-    void SpacenavTrajectory::callback_pos(const sensor_msgs::msg::JointState & msg)
-    {
-        q_current_ = msg;
-        state = 1;
-        
-    }
-
     void SpacenavTrajectory::timer_callback()
     {
         trajectory_msgs::msg::JointTrajectory trajectory_msg;
         int rc;
                 
-        if (state == 1){
-            trajectory_msg.header.stamp = n_->now();
+        trajectory_msg.header.stamp = n_->now();
         
-            for (size_t i = 0; i < chain.getNrOfSegments(); i++)
+        for (size_t i = 0; i < chain.getNrOfSegments(); i++)
+        {
+            auto joint = chain.getSegment(i).getJoint();
+            if (joint.getType() != KDL::Joint::Fixed)
             {
-                auto joint = chain.getSegment(i).getJoint();
-                if (joint.getType() != KDL::Joint::Fixed)
-                {
                 trajectory_msg.joint_names.push_back(joint.getName());
-                }
             }
-
-            q_actual.data[0] = q_current_.position[0];
-            q_actual.data[1] = q_current_.position[1];
-            q_actual.data[2] = q_current_.position[2];
-            q_actual.data[3] = q_current_.position[3];
-            q_actual.data[4] = q_current_.position[4];
-            q_actual.data[5] = q_current_.position[5];
-
-
-            auto twist = KDL::Twist(); 
-
-            twist.vel.x(twist_command.twist.linear.x * max_vel);
-            twist.vel.y(twist_command.twist.linear.y * max_vel);
-            twist.vel.z(twist_command.twist.linear.z * max_vel);
-            twist.rot.x(twist_command.twist.angular.x);
-            twist.rot.y(twist_command.twist.angular.y);
-            twist.rot.z(twist_command.twist.angular.z);
-
-            desired_pose.Integrate(twist, 1000);
-            
-            rc = tracik_solver_->CartToJnt(q_actual, desired_pose, q_desired);
-            
-            // if (rc >= 0)
-            // {
-            //     RCLCPP_INFO(n_->get_logger(),"succes");
-            // }
-            // else
-            // {
-            //     RCLCPP_INFO(n_->get_logger(),"echec code : %d", rc);
-            // }
-
-            // copy to trajectory_point_msg
-            std::memcpy(
-            trajectory_point_msg.positions.data(), q_desired.data.data(),
-            trajectory_point_msg.positions.size() * sizeof(double));
-
-            trajectory_point_prec.time_from_start.sec = 0;
-            trajectory_point_prec.time_from_start.nanosec = 0;
-            trajectory_point_msg.time_from_start.nanosec = 100000000;
-
-            trajectory_msg.points.push_back(trajectory_point_prec);
-            trajectory_msg.points.push_back(trajectory_point_msg);
-
-            command_pub_->publish(trajectory_msg);
-                
-            trajectory_point_prec = trajectory_point_msg;
         }
+
+        auto twist = KDL::Twist(); 
+
+        twist.vel.x(twist_command.twist.linear.x * max_vel);
+        twist.vel.y(twist_command.twist.linear.y * max_vel);
+        twist.vel.z(twist_command.twist.linear.z * max_vel);
+        twist.rot.x(twist_command.twist.angular.x);
+        twist.rot.y(twist_command.twist.angular.y);
+        twist.rot.z(twist_command.twist.angular.z);
+
+        desired_pose.Integrate(twist, 1000);
+            
+        rc = tracik_solver_->CartToJnt(q_actual, desired_pose, q_desired);
+            
+        // if (rc >= 0)
+        // {
+        //     RCLCPP_INFO(n_->get_logger(),"succes");
+        // }
+        // else
+        // {
+        //     RCLCPP_INFO(n_->get_logger(),"echec code : %d", rc);
+        // }
+
+        // copy to trajectory_point_msg
+        std::memcpy(
+        trajectory_point_msg.positions.data(), q_desired.data.data(),
+        trajectory_point_msg.positions.size() * sizeof(double));
+
+        trajectory_point_prec.time_from_start.sec = 0;
+        trajectory_point_prec.time_from_start.nanosec = 0;
+        trajectory_point_msg.time_from_start.nanosec = 100000000;
+
+        trajectory_msg.points.push_back(trajectory_point_prec);
+        trajectory_msg.points.push_back(trajectory_point_msg);
+
+        command_pub_->publish(trajectory_msg);
+                    
+        trajectory_point_prec = trajectory_point_msg;
+
+        q_actual.data[0] = q_desired.data[0];
+        q_actual.data[1] = q_desired.data[1];
+        q_actual.data[2] = q_desired.data[2];
+        q_actual.data[3] = q_desired.data[3];
+        q_actual.data[4] = q_desired.data[4];
+        q_actual.data[5] = q_desired.data[5];
+        
+       
         
     }
 

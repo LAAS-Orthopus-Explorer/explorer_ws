@@ -31,13 +31,11 @@ namespace space_control
         private:
         rclcpp::Node::SharedPtr n_;
         rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr trajectory_sub_;
-        rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr positions_sub_;
         rclcpp::TimerBase::SharedPtr timer_;
         
         rclcpp::Publisher<trajectory_msgs::msg::JointTrajectory>::SharedPtr command_pub_;
-                        
-        sensor_msgs::msg::JointState q_current_;
-        
+
+
         geometry_msgs::msg::TwistStamped twist_command;
 
         trajectory_msgs::msg::JointTrajectoryPoint trajectory_point_msg;

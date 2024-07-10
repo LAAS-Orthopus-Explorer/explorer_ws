@@ -28,18 +28,12 @@ namespace space_control
 
         command_pub_ = n_->create_publisher<trajectory_msgs::msg::JointTrajectory>("/explorer_controller/joint_trajectory", 10);
         trajectory_sub_ = n_->create_subscription<geometry_msgs::msg::TwistStamped>("/ros2_control_explorer/input_device_velocity", 10, std::bind(&SpacenavTrajectory::callback, this, std::placeholders::_1));
-        positions_sub_ = n_->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10, std::bind(&SpacenavTrajectory::callback_pos, this, std::placeholders::_1));
         timer_ = n_->create_wall_timer(1ms, std::bind(&SpacenavTrajectory::timer_callback, this));
     }
 
     void SpacenavTrajectory::callback(const geometry_msgs::msg::TwistStamped & msg)
     {
         twist_command = msg;
-    }
-
-    void SpacenavTrajectory::callback_pos(const sensor_msgs::msg::JointState & msg)
-    {
-        q_current_ = msg;
     }
 
     void SpacenavTrajectory::timer_callback()
