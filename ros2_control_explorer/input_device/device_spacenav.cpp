@@ -22,7 +22,7 @@ DeviceSpacenav::DeviceSpacenav(rclcpp::Node::SharedPtr n) : Device(n)
   button_right_ = 0;
 
   gripper_toggle_ = false;
-  control_mode_select_ = 1;
+  control_mode_select_ = 0;
 
   rot_x_ = 0.0;
   rot_y_ = 0.0;

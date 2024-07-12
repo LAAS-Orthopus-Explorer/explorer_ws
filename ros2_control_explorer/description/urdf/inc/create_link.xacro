@@ -6,7 +6,15 @@
         xyz_offset
         rpy_offset
         mesh_package
-        mesh_name">
+        mesh_name
+        xyz_mass
+        mass
+        ixx
+        ixy
+        ixz
+        iyy
+        iyz
+        izz">
     <link name="${link_name}">
       <visual>
         <origin xyz="${xyz_offset}" rpy="${rpy_offset}"/>
@@ -21,8 +29,9 @@
         </geometry>
       </collision>
       <inertial>
-        <mass value="1"/>
-        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+        <origin xyz="${xyz_mass}" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}"/>
       </inertial>
     </link>
   </xacro:macro>

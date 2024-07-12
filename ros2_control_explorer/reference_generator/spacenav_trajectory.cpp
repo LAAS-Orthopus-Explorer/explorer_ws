@@ -12,7 +12,7 @@ namespace space_control
         auto robot_description = robot_param.as_string();
 
         kdl_parser::treeFromString(robot_description, robot_tree);
-        robot_tree.getChain("base_link", "tool0", chain);
+        robot_tree.getChain("world", "tool0", chain);
 
         joint_positions = KDL::JntArray(chain.getNrOfJoints());
         joint_velocities = KDL::JntArray(chain.getNrOfJoints());

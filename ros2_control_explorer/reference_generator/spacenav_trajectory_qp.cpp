@@ -8,7 +8,7 @@ namespace space_control
     , ik_(n, 6)
     , fk_(n, 6)
     , vi_(n, 6)
-    , sampling_period_(0.001)
+    , sampling_period_(0.0)
     , q_command_(6)
     , q_current_(6)
     , q_meas_(6)
@@ -20,6 +20,7 @@ namespace space_control
         rcutils_logging_set_logger_level(n_->get_logger().get_name(), RCUTILS_LOG_SEVERITY_DEBUG);
 
         max_vel_ = 0.05;
+        sampling_period_ = 0.001;
 
         trajectory_point_msg.positions.resize(6);
         trajectory_point_msg.velocities.resize(6);
@@ -34,6 +35,7 @@ namespace space_control
 
         command_pub_ = n_->create_publisher<trajectory_msgs::msg::JointTrajectory>("/explorer_controller/joint_trajectory", 10);
         trajectory_sub_ = n_->create_subscription<geometry_msgs::msg::TwistStamped>("/ros2_control_explorer/input_device_velocity", 10, std::bind(&SpacenavTrajectoryQP::callback, this, std::placeholders::_1));
+        
         timer_ = n_->create_wall_timer(1ms, std::bind(&SpacenavTrajectoryQP::timer_callback, this));
 
         x_current_debug_pub_ = n_->create_publisher<geometry_msgs::msg::Pose>("/explorer_controller/debug/x_current", 10);
@@ -58,7 +60,7 @@ namespace space_control
     {
         q_current_ = q_command_;
 
-        RCLCPP_INFO(n_->get_logger(), "=== Start FK computation...");
+        //RCLCPP_INFO(n_->get_logger(), "=== Start FK computation...");
         // RCLCPP_DEBUG_STREAM(n_->get_logger(), "Input joint position :");
         // RCLCPP_DEBUG_STREAM(n_->get_logger(), "q_current_           : " << q_current_);
         fk_.setQCurrent(q_current_);
@@ -78,7 +80,7 @@ namespace space_control
         vi_.setQCurrent(q_current_);
         vi_.integrate(dq_desired_, q_command_);
         // RCLCPP_DEBUG_STREAM(n_->get_logger(), "Velocity integrator computes joint position :");
-        RCLCPP_DEBUG_STREAM(n_->get_logger(), "q_command_           : " << q_command_);
+        //RCLCPP_DEBUG_STREAM(n_->get_logger(), "q_command_           : " << q_command_);
 
         send_Command();
         publishDebugTopic_();

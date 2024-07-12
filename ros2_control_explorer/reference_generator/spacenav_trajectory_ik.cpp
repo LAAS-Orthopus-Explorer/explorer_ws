@@ -13,16 +13,16 @@ namespace space_control
         auto robot_description = robot_param.as_string();
 
         kdl_parser::treeFromString(robot_description, robot_tree);
-        robot_tree.getChain("base_link", "tool0", chain);
+        robot_tree.getChain("world", "tool0", chain);
 
         
         q_actual = KDL::JntArray(chain.getNrOfJoints());
         q_desired = KDL::JntArray(chain.getNrOfJoints());
         dq_desired = KDL::JntArray(chain.getNrOfJoints());
 
-        max_vel = 0.05;
+        max_vel = 0.08;
 
-        tracik_solver_ = std::make_shared<TRAC_IK::TRAC_IK>("base_link", "tool0", robot_description, 0.01, 1e-5);
+        tracik_solver_ = std::make_shared<TRAC_IK::TRAC_IK>("world", "tool0", robot_description, 0.01, 1e-5);
         fk_solver_ = std::make_shared<KDL::ChainFkSolverPos_recursive>(chain);
 
         q_actual.data[0] = 0.0;
