@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+Copied and modified from ROS1 example -
+https://github.com/ros-simulation/gazebo_ros_demos/blob/kinetic-devel/rrbot_description/urdf/rrbot.gazebo
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="wheelchair_gazebo" params="">
+
+    <!-- ros_control plugin -->
+  <gazebo>
+    <!-- Joint state publisher -->
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find ros2_control_wheelchair)/config/wheelchair_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="left_front_wheel">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
+  <gazebo reference="right_front_wheel">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
+  <gazebo reference="left_rear_wheel">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
+  <gazebo reference="right_rear_wheel">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+  </gazebo>
+
+  </xacro:macro>
+
+</robot>
