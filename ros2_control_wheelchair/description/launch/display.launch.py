@@ -43,7 +43,7 @@ def generate_launch_description():
                 [
                     FindPackageShare("ros2_control_wheelchair"),
                     "description/urdf",
-                    "wheelchair_display.urdf.xacro",
+                    "wheelchair.urdf.xacro",
                 ]
             ),
         ]
@@ -51,7 +51,7 @@ def generate_launch_description():
     robot_description = {"robot_description": robot_description_content}
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("ros2_control_wheelchair"), "description/rviz", "wheelchair.rviz"]
+        [FindPackageShare("ros2_control_wheelchair"), "description/rviz", "wheelchair_view.rviz"]
     )
 
     joint_state_publisher_node = Node(

@@ -36,6 +36,8 @@ topic=~/spacenav/remapped_joy_topic_to_something_not_used
 
 # Run
 
+## Run explorer alone
+
 To check that the robot descriptions are working properly use following launch commands
 
 ```
@@ -84,4 +86,25 @@ ros2 launch ros2_control_explorer explorer_spacenav_qp.launch.py gui:=true
 Start the MoveIt demo to interactively plan and execute motions for the robot in RViz.
 ```
 ros2 launch explorer_moveit_config demo.launch.py
+```
+
+## Run wheelchair alone
+
+To check that the wheelchair descriptions are working properly use following launch commands
+
+```
+ros2 launch ros2_control_wheelchair display.launch.py
+
+```
+
+To start the wheelchair in the simulators, open a terminal, source your ROS2-workspace first. Then, execute the launch file with
+
+```
+ros2 launch ros2_control_wheelchair wheelchair_gazebo_classic.launch.py gui:=true
+```
+
+Then, open a new terminal and run the following command to move the wheelchair.
+
+```
+ros2 run ros2_control_wheelchair teleop
 ```
