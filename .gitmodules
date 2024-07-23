@@ -1,4 +1,1 @@
 
-[submodule "explorer_stack/libs/trac_ik"]
-	path = explorer_stack/libs/trac_ik
-	url = https://github.com/aprotyas/trac_ik.git
