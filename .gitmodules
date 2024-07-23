@@ -1,0 +1,3 @@
+[submodule "trac_ik"]
+	path = trac_ik
+	url = https://github.com/aurone/trac_ik.git
