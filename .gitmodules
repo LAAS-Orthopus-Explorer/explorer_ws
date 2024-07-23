@@ -1,4 +1,4 @@
 
-[submodule "ros2_control_explorer/trac_ik"]
-	path = ros2_control_explorer/trac_ik
+[submodule "explorer_stack/libs/trac_ik"]
+	path = explorer_stack/libs/trac_ik
 	url = https://github.com/aprotyas/trac_ik.git
