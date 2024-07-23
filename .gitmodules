@@ -1,3 +1,4 @@
-[submodule "trac_ik"]
-	path = trac_ik
-	url = https://github.com/aurone/trac_ik.git
+
+[submodule "ros2_control_explorer/trac_ik"]
+	path = ros2_control_explorer/trac_ik
+	url = https://github.com/aprotyas/trac_ik.git
