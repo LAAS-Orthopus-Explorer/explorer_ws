@@ -66,7 +66,7 @@ ros2 launch ros2_control_explorer send_trajectory.launch.py
 You should see the robot making a circular motion in RViz and Gazebo.
 
 
-You can move the robot with cartesian control using a 3D mouse or the GUI by launching this command. (it is not working fine though)
+You can move the robot with cartesian control using a 3D mouse or the GUI by launching this command.
 
 * With KDL Solver
 ```
@@ -107,4 +107,18 @@ Then, open a new terminal and run the following command to move the wheelchair.
 
 ```
 ros2 run ros2_control_wheelchair teleop
+```
+
+## Run wheelchair and explorer
+
+To check that the descriptions are working properly use following launch commands
+
+```
+ros2 launch disabled_simulator display.launch.py
+```
+
+To start the wheelchair in the simulators, open a terminal, source your ROS2-workspace first. Then, execute the launch file with (not working)
+
+```
+ros2 launch disabled_simulator simulation.launch.py gui:=true
 ```

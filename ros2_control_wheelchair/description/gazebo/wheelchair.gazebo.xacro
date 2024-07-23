@@ -10,7 +10,7 @@ https://github.com/ros-simulation/gazebo_ros_demos/blob/kinetic-devel/rrbot_desc
     <!-- ros_control plugin -->
   <gazebo>
     <!-- Joint state publisher -->
-    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control_wheelchair">
       <parameters>$(find ros2_control_wheelchair)/config/wheelchair_controllers.yaml</parameters>
     </plugin>
   </gazebo>
