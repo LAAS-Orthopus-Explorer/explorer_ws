@@ -1,305 +1,0 @@
-#0 building with "default" instance using docker driver
-
-#1 [internal] load build definition from Dockerfile
-#1 transferring dockerfile: 763B done
-#1 DONE 0.0s
-
-#2 [internal] load .dockerignore
-#2 transferring context: 2B done
-#2 DONE 0.0s
-
-#3 [internal] load metadata for docker.io/library/ros:iron
-#3 DONE 0.7s
-
-#4 [ 1/14] FROM docker.io/library/ros:iron@sha256:973b69b3c3ddcb0729af2ac6af440672658da97836328b8d35b83dd8d7fb7b30
-#4 CACHED
-
-#5 [internal] load build context
-#5 transferring context: 45.76kB 0.0s done
-#5 DONE 0.0s
-
-#6 [ 2/14] COPY . ./src/
-#6 DONE 0.9s
-
-#7 [ 3/14] WORKDIR src
-#7 DONE 0.1s
-
-#8 [ 4/14] RUN apt update
-#8 0.231 
-#8 0.231 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-#8 0.231 
-#8 0.331 Get:1 http://security.ubuntu.com/ubuntu jammy-security InRelease [129 kB]
-#8 0.453 Get:2 http://archive.ubuntu.com/ubuntu jammy InRelease [270 kB]
-#8 0.528 Get:3 http://packages.ros.org/ros2/ubuntu jammy InRelease [4682 B]
-#8 0.584 Get:4 http://security.ubuntu.com/ubuntu jammy-security/restricted amd64 Packages [2717 kB]
-#8 0.723 Get:5 http://security.ubuntu.com/ubuntu jammy-security/main amd64 Packages [2071 kB]
-#8 0.743 Get:6 http://security.ubuntu.com/ubuntu jammy-security/universe amd64 Packages [1128 kB]
-#8 0.752 Get:7 http://security.ubuntu.com/ubuntu jammy-security/multiverse amd64 Packages [44.7 kB]
-#8 0.759 Get:8 http://packages.ros.org/ros2/ubuntu jammy/main amd64 Packages [1568 kB]
-#8 0.923 Get:9 http://archive.ubuntu.com/ubuntu jammy-updates InRelease [128 kB]
-#8 1.037 Get:10 http://archive.ubuntu.com/ubuntu jammy-backports InRelease [127 kB]
-#8 1.152 Get:11 http://archive.ubuntu.com/ubuntu jammy/restricted amd64 Packages [164 kB]
-#8 1.192 Get:12 http://archive.ubuntu.com/ubuntu jammy/universe amd64 Packages [17.5 MB]
-#8 1.908 Get:13 http://archive.ubuntu.com/ubuntu jammy/main amd64 Packages [1792 kB]
-#8 1.964 Get:14 http://archive.ubuntu.com/ubuntu jammy/multiverse amd64 Packages [266 kB]
-#8 1.968 Get:15 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages [2338 kB]
-#8 2.012 Get:16 http://archive.ubuntu.com/ubuntu jammy-updates/multiverse amd64 Packages [51.8 kB]
-#8 2.044 Get:17 http://archive.ubuntu.com/ubuntu jammy-updates/restricted amd64 Packages [2795 kB]
-#8 2.097 Get:18 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 Packages [1418 kB]
-#8 2.143 Get:19 http://archive.ubuntu.com/ubuntu jammy-backports/universe amd64 Packages [33.7 kB]
-#8 2.169 Get:20 http://archive.ubuntu.com/ubuntu jammy-backports/main amd64 Packages [81.0 kB]
-#8 2.869 Fetched 34.6 MB in 3s (13.3 MB/s)
-#8 2.869 Reading package lists...
-#8 3.676 Building dependency tree...
-#8 3.843 Reading state information...
-#8 3.862 215 packages can be upgraded. Run 'apt list --upgradable' to see them.
-#8 DONE 4.5s
-
-#9 [ 5/14] RUN apt install -y ros-iron-ros2-control
-#9 0.429 
-#9 0.429 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-#9 0.429 
-#9 0.464 Reading package lists...
-#9 1.255 Building dependency tree...
-#9 1.421 Reading state information...
-#9 1.592 The following additional packages will be installed:
-#9 1.593   libdw-dev libdw1 libelf-dev libelf1 liblzma-dev python3-pygraphviz
-#9 1.593   ros-iron-backward-ros ros-iron-control-msgs ros-iron-controller-interface
-#9 1.593   ros-iron-controller-manager ros-iron-controller-manager-msgs
-#9 1.593   ros-iron-diagnostic-updater ros-iron-hardware-interface
-#9 1.593   ros-iron-joint-limits ros-iron-realtime-tools
-#9 1.593   ros-iron-ros2-control-test-assets ros-iron-ros2controlcli
-#9 1.593   ros-iron-transmission-interface
-#9 1.594 Suggested packages:
-#9 1.594   liblzma-doc python-pygraphviz-doc
-#9 1.661 The following NEW packages will be installed:
-#9 1.662   libdw-dev libdw1 libelf-dev libelf1 liblzma-dev python3-pygraphviz
-#9 1.662   ros-iron-backward-ros ros-iron-control-msgs ros-iron-controller-interface
-#9 1.662   ros-iron-controller-manager ros-iron-controller-manager-msgs
-#9 1.662   ros-iron-diagnostic-updater ros-iron-hardware-interface
-#9 1.662   ros-iron-joint-limits ros-iron-realtime-tools ros-iron-ros2-control
-#9 1.662   ros-iron-ros2-control-test-assets ros-iron-ros2controlcli
-#9 1.663   ros-iron-transmission-interface
-#9 1.758 0 upgraded, 19 newly installed, 0 to remove and 215 not upgraded.
-#9 1.758 Need to get 2843 kB of archives.
-#9 1.758 After this operation, 25.5 MB of additional disk space will be used.
-#9 1.758 Get:1 http://archive.ubuntu.com/ubuntu jammy/main amd64 libelf1 amd64 0.186-1build1 [51.0 kB]
-#9 1.824 Get:2 http://archive.ubuntu.com/ubuntu jammy/main amd64 libelf-dev amd64 0.186-1build1 [64.4 kB]
-#9 1.839 Get:3 http://archive.ubuntu.com/ubuntu jammy/main amd64 libdw1 amd64 0.186-1build1 [250 kB]
-#9 1.883 Get:4 http://archive.ubuntu.com/ubuntu jammy/main amd64 liblzma-dev amd64 5.2.5-2ubuntu1 [159 kB]
-#9 1.896 Get:5 http://archive.ubuntu.com/ubuntu jammy/main amd64 libdw-dev amd64 0.186-1build1 [327 kB]
-#9 1.912 Get:6 http://archive.ubuntu.com/ubuntu jammy/universe amd64 python3-pygraphviz amd64 1.7-3build1 [78.9 kB]
-#9 1.958 Get:7 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-backward-ros amd64 1.0.5-1jammy.20240711.224901 [58.3 kB]
-#9 2.319 Get:8 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-control-msgs amd64 5.2.0-1jammy.20240711.234601 [687 kB]
-#9 2.803 Get:9 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-hardware-interface amd64 3.26.0-1jammy.20240712.000500 [221 kB]
-#9 2.924 Get:10 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-controller-interface amd64 3.26.0-1jammy.20240712.000916 [34.6 kB]
-#9 2.925 Get:11 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-controller-manager-msgs amd64 3.26.0-1jammy.20240711.232910 [337 kB]
-#9 3.046 Get:12 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-diagnostic-updater amd64 4.1.0-1jammy.20240712.000450 [93.6 kB]
-#9 3.167 Get:13 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-realtime-tools amd64 2.5.0-3jammy.20240712.000703 [25.0 kB]
-#9 3.168 Get:14 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-ros2-control-test-assets amd64 3.26.0-1jammy.20240711.222325 [13.8 kB]
-#9 3.168 Get:15 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-controller-manager amd64 3.26.0-1jammy.20240712.001207 [351 kB]
-#9 3.289 Get:16 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-joint-limits amd64 3.26.0-1jammy.20240712.001155 [13.3 kB]
-#9 3.290 Get:17 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-ros2controlcli amd64 3.26.0-1jammy.20240712.001702 [21.1 kB]
-#9 3.291 Get:18 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-transmission-interface amd64 3.26.0-1jammy.20240712.000958 [50.9 kB]
-#9 3.410 Get:19 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-ros2-control amd64 3.26.0-1jammy.20240712.002005 [6374 B]
-#9 3.598 debconf: delaying package configuration, since apt-utils is not installed
-#9 3.649 Fetched 2843 kB in 2s (1635 kB/s)
-#9 3.735 Selecting previously unselected package libelf1:amd64.
-#9 3.735 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 39443 files and directories currently installed.)
-#9 3.763 Preparing to unpack .../00-libelf1_0.186-1build1_amd64.deb ...
-#9 3.785 Unpacking libelf1:amd64 (0.186-1build1) ...
-#9 3.882 Selecting previously unselected package libelf-dev:amd64.
-#9 3.889 Preparing to unpack .../01-libelf-dev_0.186-1build1_amd64.deb ...
-#9 3.898 Unpacking libelf-dev:amd64 (0.186-1build1) ...
-#9 3.988 Selecting previously unselected package libdw1:amd64.
-#9 3.992 Preparing to unpack .../02-libdw1_0.186-1build1_amd64.deb ...
-#9 4.000 Unpacking libdw1:amd64 (0.186-1build1) ...
-#9 4.067 Selecting previously unselected package liblzma-dev:amd64.
-#9 4.074 Preparing to unpack .../03-liblzma-dev_5.2.5-2ubuntu1_amd64.deb ...
-#9 4.081 Unpacking liblzma-dev:amd64 (5.2.5-2ubuntu1) ...
-#9 4.152 Selecting previously unselected package libdw-dev:amd64.
-#9 4.159 Preparing to unpack .../04-libdw-dev_0.186-1build1_amd64.deb ...
-#9 4.172 Unpacking libdw-dev:amd64 (0.186-1build1) ...
-#9 4.256 Selecting previously unselected package python3-pygraphviz.
-#9 4.263 Preparing to unpack .../05-python3-pygraphviz_1.7-3build1_amd64.deb ...
-#9 4.271 Unpacking python3-pygraphviz (1.7-3build1) ...
-#9 4.339 Selecting previously unselected package ros-iron-backward-ros.
-#9 4.345 Preparing to unpack .../06-ros-iron-backward-ros_1.0.5-1jammy.20240711.224901_amd64.deb ...
-#9 4.353 Unpacking ros-iron-backward-ros (1.0.5-1jammy.20240711.224901) ...
-#9 4.431 Selecting previously unselected package ros-iron-control-msgs.
-#9 4.438 Preparing to unpack .../07-ros-iron-control-msgs_5.2.0-1jammy.20240711.234601_amd64.deb ...
-#9 4.452 Unpacking ros-iron-control-msgs (5.2.0-1jammy.20240711.234601) ...
-#9 4.624 Selecting previously unselected package ros-iron-hardware-interface.
-#9 4.632 Preparing to unpack .../08-ros-iron-hardware-interface_3.26.0-1jammy.20240712.000500_amd64.deb ...
-#9 4.652 Unpacking ros-iron-hardware-interface (3.26.0-1jammy.20240712.000500) ...
-#9 4.744 Selecting previously unselected package ros-iron-controller-interface.
-#9 4.748 Preparing to unpack .../09-ros-iron-controller-interface_3.26.0-1jammy.20240712.000916_amd64.deb ...
-#9 4.755 Unpacking ros-iron-controller-interface (3.26.0-1jammy.20240712.000916) ...
-#9 4.836 Selecting previously unselected package ros-iron-controller-manager-msgs.
-#9 4.843 Preparing to unpack .../10-ros-iron-controller-manager-msgs_3.26.0-1jammy.20240711.232910_amd64.deb ...
-#9 4.851 Unpacking ros-iron-controller-manager-msgs (3.26.0-1jammy.20240711.232910) ...
-#9 4.974 Selecting previously unselected package ros-iron-diagnostic-updater.
-#9 4.981 Preparing to unpack .../11-ros-iron-diagnostic-updater_4.1.0-1jammy.20240712.000450_amd64.deb ...
-#9 4.989 Unpacking ros-iron-diagnostic-updater (4.1.0-1jammy.20240712.000450) ...
-#9 5.069 Selecting previously unselected package ros-iron-realtime-tools.
-#9 5.077 Preparing to unpack .../12-ros-iron-realtime-tools_2.5.0-3jammy.20240712.000703_amd64.deb ...
-#9 5.108 Unpacking ros-iron-realtime-tools (2.5.0-3jammy.20240712.000703) ...
-#9 5.180 Selecting previously unselected package ros-iron-ros2-control-test-assets.
-#9 5.187 Preparing to unpack .../13-ros-iron-ros2-control-test-assets_3.26.0-1jammy.20240711.222325_amd64.deb ...
-#9 5.195 Unpacking ros-iron-ros2-control-test-assets (3.26.0-1jammy.20240711.222325) ...
-#9 5.275 Selecting previously unselected package ros-iron-controller-manager.
-#9 5.282 Preparing to unpack .../14-ros-iron-controller-manager_3.26.0-1jammy.20240712.001207_amd64.deb ...
-#9 5.301 Unpacking ros-iron-controller-manager (3.26.0-1jammy.20240712.001207) ...
-#9 5.390 Selecting previously unselected package ros-iron-joint-limits.
-#9 5.399 Preparing to unpack .../15-ros-iron-joint-limits_3.26.0-1jammy.20240712.001155_amd64.deb ...
-#9 5.407 Unpacking ros-iron-joint-limits (3.26.0-1jammy.20240712.001155) ...
-#9 5.501 Selecting previously unselected package ros-iron-ros2controlcli.
-#9 5.509 Preparing to unpack .../16-ros-iron-ros2controlcli_3.26.0-1jammy.20240712.001702_amd64.deb ...
-#9 5.517 Unpacking ros-iron-ros2controlcli (3.26.0-1jammy.20240712.001702) ...
-#9 5.592 Selecting previously unselected package ros-iron-transmission-interface.
-#9 5.598 Preparing to unpack .../17-ros-iron-transmission-interface_3.26.0-1jammy.20240712.000958_amd64.deb ...
-#9 5.606 Unpacking ros-iron-transmission-interface (3.26.0-1jammy.20240712.000958) ...
-#9 5.683 Selecting previously unselected package ros-iron-ros2-control.
-#9 5.692 Preparing to unpack .../18-ros-iron-ros2-control_3.26.0-1jammy.20240712.002005_amd64.deb ...
-#9 5.700 Unpacking ros-iron-ros2-control (3.26.0-1jammy.20240712.002005) ...
-#9 5.805 Setting up ros-iron-joint-limits (3.26.0-1jammy.20240712.001155) ...
-#9 5.841 Setting up ros-iron-control-msgs (5.2.0-1jammy.20240711.234601) ...
-#9 5.872 Setting up ros-iron-realtime-tools (2.5.0-3jammy.20240712.000703) ...
-#9 5.896 Setting up liblzma-dev:amd64 (5.2.5-2ubuntu1) ...
-#9 5.930 Setting up python3-pygraphviz (1.7-3build1) ...
-#9 6.124 Setting up ros-iron-controller-manager-msgs (3.26.0-1jammy.20240711.232910) ...
-#9 6.155 Setting up ros-iron-hardware-interface (3.26.0-1jammy.20240712.000500) ...
-#9 6.188 Setting up ros-iron-controller-interface (3.26.0-1jammy.20240712.000916) ...
-#9 6.226 Setting up ros-iron-diagnostic-updater (4.1.0-1jammy.20240712.000450) ...
-#9 6.265 Setting up libelf1:amd64 (0.186-1build1) ...
-#9 6.289 Setting up ros-iron-ros2-control-test-assets (3.26.0-1jammy.20240711.222325) ...
-#9 6.314 Setting up libdw1:amd64 (0.186-1build1) ...
-#9 6.339 Setting up ros-iron-transmission-interface (3.26.0-1jammy.20240712.000958) ...
-#9 6.385 Setting up libelf-dev:amd64 (0.186-1build1) ...
-#9 6.410 Setting up libdw-dev:amd64 (0.186-1build1) ...
-#9 6.457 Setting up ros-iron-backward-ros (1.0.5-1jammy.20240711.224901) ...
-#9 6.493 Setting up ros-iron-controller-manager (3.26.0-1jammy.20240712.001207) ...
-#9 6.524 Setting up ros-iron-ros2controlcli (3.26.0-1jammy.20240712.001702) ...
-#9 6.570 Setting up ros-iron-ros2-control (3.26.0-1jammy.20240712.002005) ...
-#9 6.596 Processing triggers for libc-bin (2.35-0ubuntu3.8) ...
-#9 DONE 6.8s
-
-#10 [ 6/14] RUN apt install -y vim
-#10 0.441 
-#10 0.441 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-#10 0.441 
-#10 0.479 Reading package lists...
-#10 1.288 Building dependency tree...
-#10 1.466 Reading state information...
-#10 1.644 The following additional packages will be installed:
-#10 1.645   libgpm2 libsodium23 vim-common vim-runtime xxd
-#10 1.646 Suggested packages:
-#10 1.646   gpm ctags vim-doc vim-scripts
-#10 1.688 The following NEW packages will be installed:
-#10 1.689   libgpm2 libsodium23 vim vim-common vim-runtime xxd
-#10 1.766 0 upgraded, 6 newly installed, 0 to remove and 215 not upgraded.
-#10 1.766 Need to get 8875 kB of archives.
-#10 1.766 After this operation, 38.8 MB of additional disk space will be used.
-#10 1.766 Get:1 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 xxd amd64 2:8.2.3995-1ubuntu2.17 [53.7 kB]
-#10 1.837 Get:2 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 vim-common all 2:8.2.3995-1ubuntu2.17 [81.5 kB]
-#10 1.862 Get:3 http://archive.ubuntu.com/ubuntu jammy/main amd64 libgpm2 amd64 1.20.7-10build1 [15.3 kB]
-#10 1.866 Get:4 http://archive.ubuntu.com/ubuntu jammy/main amd64 libsodium23 amd64 1.0.18-1build2 [164 kB]
-#10 1.891 Get:5 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 vim-runtime all 2:8.2.3995-1ubuntu2.17 [6827 kB]
-#10 2.005 Get:6 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 vim amd64 2:8.2.3995-1ubuntu2.17 [1734 kB]
-#10 2.464 debconf: delaying package configuration, since apt-utils is not installed
-#10 2.533 Fetched 8875 kB in 0s (27.3 MB/s)
-#10 2.611 Selecting previously unselected package xxd.
-#10 2.611 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 41016 files and directories currently installed.)
-#10 2.642 Preparing to unpack .../0-xxd_2%3a8.2.3995-1ubuntu2.17_amd64.deb ...
-#10 2.655 Unpacking xxd (2:8.2.3995-1ubuntu2.17) ...
-#10 2.760 Selecting previously unselected package vim-common.
-#10 2.768 Preparing to unpack .../1-vim-common_2%3a8.2.3995-1ubuntu2.17_all.deb ...
-#10 2.787 Unpacking vim-common (2:8.2.3995-1ubuntu2.17) ...
-#10 2.900 Selecting previously unselected package libgpm2:amd64.
-#10 2.907 Preparing to unpack .../2-libgpm2_1.20.7-10build1_amd64.deb ...
-#10 2.934 Unpacking libgpm2:amd64 (1.20.7-10build1) ...
-#10 3.049 Selecting previously unselected package libsodium23:amd64.
-#10 3.057 Preparing to unpack .../3-libsodium23_1.0.18-1build2_amd64.deb ...
-#10 3.070 Unpacking libsodium23:amd64 (1.0.18-1build2) ...
-#10 3.164 Selecting previously unselected package vim-runtime.
-#10 3.172 Preparing to unpack .../4-vim-runtime_2%3a8.2.3995-1ubuntu2.17_all.deb ...
-#10 3.194 Adding 'diversion of /usr/share/vim/vim82/doc/help.txt to /usr/share/vim/vim82/doc/help.txt.vim-tiny by vim-runtime'
-#10 3.214 Adding 'diversion of /usr/share/vim/vim82/doc/tags to /usr/share/vim/vim82/doc/tags.vim-tiny by vim-runtime'
-#10 3.221 Unpacking vim-runtime (2:8.2.3995-1ubuntu2.17) ...
-#10 3.662 Selecting previously unselected package vim.
-#10 3.669 Preparing to unpack .../5-vim_2%3a8.2.3995-1ubuntu2.17_amd64.deb ...
-#10 3.686 Unpacking vim (2:8.2.3995-1ubuntu2.17) ...
-#10 3.855 Setting up libsodium23:amd64 (1.0.18-1build2) ...
-#10 3.880 Setting up libgpm2:amd64 (1.20.7-10build1) ...
-#10 3.920 Setting up xxd (2:8.2.3995-1ubuntu2.17) ...
-#10 3.945 Setting up vim-common (2:8.2.3995-1ubuntu2.17) ...
-#10 4.020 Setting up vim-runtime (2:8.2.3995-1ubuntu2.17) ...
-#10 4.196 Setting up vim (2:8.2.3995-1ubuntu2.17) ...
-#10 4.243 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vim (vim) in auto mode
-#10 4.268 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vimdiff (vimdiff) in auto mode
-#10 4.280 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rvim (rvim) in auto mode
-#10 4.288 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rview (rview) in auto mode
-#10 4.296 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vi (vi) in auto mode
-#10 4.296 update-alternatives: warning: skip creation of /usr/share/man/da/man1/vi.1.gz because associated file /usr/share/man/da/man1/vim.1.gz (of link group vi) doesn't exist
-#10 4.297 update-alternatives: warning: skip creation of /usr/share/man/de/man1/vi.1.gz because associated file /usr/share/man/de/man1/vim.1.gz (of link group vi) doesn't exist
-#10 4.297 update-alternatives: warning: skip creation of /usr/share/man/fr/man1/vi.1.gz because associated file /usr/share/man/fr/man1/vim.1.gz (of link group vi) doesn't exist
-#10 4.297 update-alternatives: warning: skip creation of /usr/share/man/it/man1/vi.1.gz because associated file /usr/share/man/it/man1/vim.1.gz (of link group vi) doesn't exist
-#10 4.297 update-alternatives: warning: skip creation of /usr/share/man/ja/man1/vi.1.gz because associated file /usr/share/man/ja/man1/vim.1.gz (of link group vi) doesn't exist
-#10 4.297 update-alternatives: warning: skip creation of /usr/share/man/pl/man1/vi.1.gz because associated file /usr/share/man/pl/man1/vim.1.gz (of link group vi) doesn't exist
-#10 4.297 update-alternatives: warning: skip creation of /usr/share/man/ru/man1/vi.1.gz because associated file /usr/share/man/ru/man1/vim.1.gz (of link group vi) doesn't exist
-#10 4.297 update-alternatives: warning: skip creation of /usr/share/man/man1/vi.1.gz because associated file /usr/share/man/man1/vim.1.gz (of link group vi) doesn't exist
-#10 4.306 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/view (view) in auto mode
-#10 4.306 update-alternatives: warning: skip creation of /usr/share/man/da/man1/view.1.gz because associated file /usr/share/man/da/man1/vim.1.gz (of link group view) doesn't exist
-#10 4.306 update-alternatives: warning: skip creation of /usr/share/man/de/man1/view.1.gz because associated file /usr/share/man/de/man1/vim.1.gz (of link group view) doesn't exist
-#10 4.306 update-alternatives: warning: skip creation of /usr/share/man/fr/man1/view.1.gz because associated file /usr/share/man/fr/man1/vim.1.gz (of link group view) doesn't exist
-#10 4.306 update-alternatives: warning: skip creation of /usr/share/man/it/man1/view.1.gz because associated file /usr/share/man/it/man1/vim.1.gz (of link group view) doesn't exist
-#10 4.306 update-alternatives: warning: skip creation of /usr/share/man/ja/man1/view.1.gz because associated file /usr/share/man/ja/man1/vim.1.gz (of link group view) doesn't exist
-#10 4.306 update-alternatives: warning: skip creation of /usr/share/man/pl/man1/view.1.gz because associated file /usr/share/man/pl/man1/vim.1.gz (of link group view) doesn't exist
-#10 4.306 update-alternatives: warning: skip creation of /usr/share/man/ru/man1/view.1.gz because associated file /usr/share/man/ru/man1/vim.1.gz (of link group view) doesn't exist
-#10 4.306 update-alternatives: warning: skip creation of /usr/share/man/man1/view.1.gz because associated file /usr/share/man/man1/vim.1.gz (of link group view) doesn't exist
-#10 4.325 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/ex (ex) in auto mode
-#10 4.325 update-alternatives: warning: skip creation of /usr/share/man/da/man1/ex.1.gz because associated file /usr/share/man/da/man1/vim.1.gz (of link group ex) doesn't exist
-#10 4.325 update-alternatives: warning: skip creation of /usr/share/man/de/man1/ex.1.gz because associated file /usr/share/man/de/man1/vim.1.gz (of link group ex) doesn't exist
-#10 4.325 update-alternatives: warning: skip creation of /usr/share/man/fr/man1/ex.1.gz because associated file /usr/share/man/fr/man1/vim.1.gz (of link group ex) doesn't exist
-#10 4.325 update-alternatives: warning: skip creation of /usr/share/man/it/man1/ex.1.gz because associated file /usr/share/man/it/man1/vim.1.gz (of link group ex) doesn't exist
-#10 4.325 update-alternatives: warning: skip creation of /usr/share/man/ja/man1/ex.1.gz because associated file /usr/share/man/ja/man1/vim.1.gz (of link group ex) doesn't exist
-#10 4.325 update-alternatives: warning: skip creation of /usr/share/man/pl/man1/ex.1.gz because associated file /usr/share/man/pl/man1/vim.1.gz (of link group ex) doesn't exist
-#10 4.325 update-alternatives: warning: skip creation of /usr/share/man/ru/man1/ex.1.gz because associated file /usr/share/man/ru/man1/vim.1.gz (of link group ex) doesn't exist
-#10 4.325 update-alternatives: warning: skip creation of /usr/share/man/man1/ex.1.gz because associated file /usr/share/man/man1/vim.1.gz (of link group ex) doesn't exist
-#10 4.334 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/editor (editor) in auto mode
-#10 4.334 update-alternatives: warning: skip creation of /usr/share/man/da/man1/editor.1.gz because associated file /usr/share/man/da/man1/vim.1.gz (of link group editor) doesn't exist
-#10 4.334 update-alternatives: warning: skip creation of /usr/share/man/de/man1/editor.1.gz because associated file /usr/share/man/de/man1/vim.1.gz (of link group editor) doesn't exist
-#10 4.334 update-alternatives: warning: skip creation of /usr/share/man/fr/man1/editor.1.gz because associated file /usr/share/man/fr/man1/vim.1.gz (of link group editor) doesn't exist
-#10 4.334 update-alternatives: warning: skip creation of /usr/share/man/it/man1/editor.1.gz because associated file /usr/share/man/it/man1/vim.1.gz (of link group editor) doesn't exist
-#10 4.334 update-alternatives: warning: skip creation of /usr/share/man/ja/man1/editor.1.gz because associated file /usr/share/man/ja/man1/vim.1.gz (of link group editor) doesn't exist
-#10 4.334 update-alternatives: warning: skip creation of /usr/share/man/pl/man1/editor.1.gz because associated file /usr/share/man/pl/man1/vim.1.gz (of link group editor) doesn't exist
-#10 4.334 update-alternatives: warning: skip creation of /usr/share/man/ru/man1/editor.1.gz because associated file /usr/share/man/ru/man1/vim.1.gz (of link group editor) doesn't exist
-#10 4.334 update-alternatives: warning: skip creation of /usr/share/man/man1/editor.1.gz because associated file /usr/share/man/man1/vim.1.gz (of link group editor) doesn't exist
-#10 4.354 Processing triggers for libc-bin (2.35-0ubuntu3.8) ...
-#10 DONE 4.8s
-
-#11 [ 7/14] RUN apt install -y ros-iron-ament-cmake
-#11 0.464 
-#11 0.464 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-#11 0.464 
-#11 0.503 Reading package lists...
-#11 1.284 Building dependency tree...
-#11 1.454 Reading state information...
-#11 1.657 The following packages will be upgraded:
-#11 1.657   ros-iron-ament-cmake
-#11 2.012 1 upgraded, 0 newly installed, 0 to remove and 214 not upgraded.
-#11 2.012 Need to get 7666 B of archives.
-#11 2.012 After this operation, 0 B of additional disk space will be used.
-#11 2.012 Get:1 http://packages.ros.org/ros2/ubuntu jammy/main amd64 ros-iron-ament-cmake amd64 2.0.6-1jammy.20240711.220324 [7666 B]
-#11 2.201 debconf: delaying package configuration, since apt-utils is not installed
-#11 2.255 Fetched 7666 B in 0s (22.0 kB/s)
-#11 2.319 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 43048 files and directories currently installed.)
-#11 2.351 Preparing to unpack .../ros-iron-ament-cmake_2.0.6-1jammy.20240711.220324_amd64.deb ...
-#11 2.394 Unpacking ros-iron-ament-cmake (2.0.6-1jammy.20240711.220324) over (2.0.5-1jammy.20240419.155610) ...
-#11 2.688 Setting up ros-iron-ament-cmake (2.0.6-1jammy.20240711.220324) ...
-#11 DONE 2.9s
-
-#12 [ 8/14] RUN . /opt/ros/iron/setup.sh
-#12 DONE 0.6s
-
-#13 [ 9/14] RUN rosdep install -i -y --from-paths .; return 0
