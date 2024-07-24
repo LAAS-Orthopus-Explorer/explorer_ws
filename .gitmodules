@@ -1,7 +1,3 @@
-
-[submodule "explorer_stack/libs/trac_ik"]
-	path = explorer_stack/libs/trac_ik
-	url = git@github.com:ARMMS-ORTHOPUS/trac_ik.git
 [submodule "explorer_stack"]
 	path = explorer_stack
 	url = git@bitbucket.org:orthopusactuators/explorer_stack.git
