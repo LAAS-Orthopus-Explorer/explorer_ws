@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="simulation">
 
-  <xacro:include filename="$(find ros2_control_wheelchair)/description/urdf/wheelchair.urdf.xacro" />
+  <xacro:include filename="$(find ros2_control_wheelchair)/description/material/wheelchair.materials.xacro" />
 
-  <xacro:include filename="$(find ros2_control_explorer)/description/urdf/explorer.urdf.xacro" />
+  <xacro:include filename="$(find ros2_control_wheelchair)/description/urdf/wheelchair_description.urdf.xacro" />
+ 
+  <xacro:wheelchair/>
+
+  <xacro:include filename="$(find ros2_control_explorer)/description/urdf/explorer_old_description.urdf.xacro" />
+
+  <xacro:explorer_old_description/>
 
   <link name="fixation">
     <visual>
@@ -37,4 +43,11 @@
     <child link="base_link"/>
   </joint>
   
+  <xacro:include filename="$(find disabled_simulator)/description/ros2_control/simulation.ros2_control.xacro" />
+   
+  <xacro:simulation_ros2_control name="simulation"/>
+   
+  <xacro:include filename="$(find disabled_simulator)/description/gazebo/simulation.gazebo.xacro" />
+  <xacro:simulation_gazebo/>
+   
 </robot>

@@ -61,8 +61,6 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare("disabled_simulator"), "description/urdf", "simulation.urdf.xacro"]
             ),
-            " ",
-            "use_gazebo_classic:=true",
         ]
     )
     robot_description = {"robot_description": robot_description_content}
@@ -73,7 +71,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("disabled_simulator"), "description/urdf", "simulation.srdf"]
+                [FindPackageShare("disabled_simulator"), "description/urdf", "explorer.srdf"]
             ),
             " ",
         ]
