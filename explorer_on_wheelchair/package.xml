@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>disabled_simulator</name>
+  <name>explorer_on_wheelchair</name>
   <version>0.0.0</version>
   <description>Demo package of `ros2_control` hardware for a carlike robot with two wheels in front that steer and two wheels in the back that drive.</description>
 

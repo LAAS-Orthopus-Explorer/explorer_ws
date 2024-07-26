@@ -15,13 +15,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file://$(find disabled_simulator)/description/meshes/visual/fixation.dae" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find explorer_on_wheelchair)/description/meshes/visual/fixation.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file://$(find disabled_simulator)/description/meshes/collision/fixation.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find explorer_on_wheelchair)/description/meshes/collision/fixation.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -43,11 +43,11 @@
     <child link="base_link"/>
   </joint>
   
-  <xacro:include filename="$(find disabled_simulator)/description/ros2_control/simulation.ros2_control.xacro" />
+  <xacro:include filename="$(find explorer_on_wheelchair)/description/ros2_control/simulation.ros2_control.xacro" />
    
   <xacro:simulation_ros2_control name="simulation"/>
    
-  <xacro:include filename="$(find disabled_simulator)/description/gazebo/simulation.gazebo.xacro" />
+  <xacro:include filename="$(find explorer_on_wheelchair)/description/gazebo/simulation.gazebo.xacro" />
   <xacro:simulation_gazebo/>
    
 </robot>

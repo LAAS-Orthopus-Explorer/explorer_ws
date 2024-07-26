@@ -59,7 +59,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("disabled_simulator"), "description/urdf", "simulation.urdf.xacro"]
+                [FindPackageShare("explorer_on_wheelchair"), "description/urdf", "simulation.urdf.xacro"]
             ),
         ]
     )
@@ -71,7 +71,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("disabled_simulator"), "description/urdf", "explorer.srdf"]
+                [FindPackageShare("explorer_on_wheelchair"), "description/urdf", "explorer.srdf"]
             ),
             " ",
         ]
@@ -80,7 +80,7 @@ def generate_launch_description():
     robot_description_semantic = {"robot_description_semantic": semantic_content}
     
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("disabled_simulator"), "description/rviz", "simulation.rviz"]
+        [FindPackageShare("explorer_on_wheelchair"), "description/rviz", "simulation.rviz"]
     )
 
     ## Declare SpaceNav nodes (driver & input_device)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(disabled_simulator)
+project(explorer_on_wheelchair)
 
 # Default to C11
 if(NOT CMAKE_C_STANDARD)
@@ -24,11 +24,11 @@ find_package(std_msgs REQUIRED)
 
 install(
   DIRECTORY description 
-  DESTINATION share/disabled_simulator
+  DESTINATION share/explorer_on_wheelchair
 )
 install(
   DIRECTORY bringup/launch bringup/config
-  DESTINATION share/disabled_simulator
+  DESTINATION share/explorer_on_wheelchair
 )
 
 if(BUILD_TESTING)

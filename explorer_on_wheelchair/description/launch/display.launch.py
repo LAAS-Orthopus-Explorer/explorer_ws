@@ -41,7 +41,7 @@ def generate_launch_description():
             " ",
             PathJoinSubstitution(
                 [
-                    FindPackageShare("disabled_simulator"),
+                    FindPackageShare("explorer_on_wheelchair"),
                     "description/urdf",
                     "simulation.urdf.xacro",
                 ]
@@ -51,7 +51,7 @@ def generate_launch_description():
     robot_description = {"robot_description": robot_description_content}
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("disabled_simulator"), "description/rviz", "simulation_view.rviz"]
+        [FindPackageShare("explorer_on_wheelchair"), "description/rviz", "simulation_view.rviz"]
     )
 
     joint_state_publisher_node = Node(
