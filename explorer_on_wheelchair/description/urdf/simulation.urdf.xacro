@@ -11,6 +11,10 @@
 
   <xacro:explorer_old_description/>
 
+  <xacro:include filename="$(find gripper_pincette)/description/urdf/gripper_pincette_description.urdf.xacro"/>
+  
+  <xacro:gripper_pincette/>
+
   <link name="fixation">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -41,6 +45,27 @@
     <origin xyz="0.0 -0.075 0.0" rpy="0 0 0"/>
     <parent link="fixation"/>
     <child link="base_link"/>
+  </joint>
+
+    <joint name="joint_6" type="revolute">
+    <parent link="link_5"/>
+    <child link="structure"/>
+    <origin xyz="0 0.090 0.083" rpy="${-(65*pi)/180} 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="${-pi}" upper="${pi}" velocity="2.5"/>
+  </joint>
+
+  <joint name="joint-ft_frame" type="fixed">
+    <parent link="structure"/>
+    <child link="ft_frame"/>
+    <origin xyz="0.011 0 0.15" rpy="0 0 0"/>
+  </joint>
+
+
+  <joint name="joint-tool" type="fixed">
+    <parent link="ft_frame"/>
+    <child link="tool0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
   
   <xacro:include filename="$(find explorer_on_wheelchair)/description/ros2_control/simulation.ros2_control.xacro" />

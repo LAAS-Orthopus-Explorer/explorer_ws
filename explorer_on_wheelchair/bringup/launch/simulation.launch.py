@@ -156,6 +156,12 @@ def generate_launch_description():
         arguments=["diff_drive_base_controller", "--controller-manager", "/controller_manager"],
     )
 
+    gripper_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gripper_controller", "--controller-manager", "/controller_manager"],
+    )
+
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -185,6 +191,7 @@ def generate_launch_description():
         spacenav_driver_node,
         spacenav_trajectory_qp_node,
         diff_drive_base_controller_spawner,
+        gripper_controller_spawner,
     ]
 
     return LaunchDescription(declared_arguments + nodes)
