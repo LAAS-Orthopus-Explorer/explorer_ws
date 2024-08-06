@@ -46,11 +46,11 @@ def generate_launch_description():
         default_value='True',
         description='If the spacenav 3D mouse is used')
 
-    gazebo = IncludeLaunchDescription(
+    ignition = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare("gazebo_ros"), "launch", "gazebo.launch.py"])]
+            [FindPackageShare("ros_gz_sim"), "/launch/gz_sim.launch.py"]
         ),
-        launch_arguments={"verbose": "false"}.items(),
+        launch_arguments={"gz_args": " -r -v 4 empty.sdf"}.items(),
     )
 
     # Get URDF via xacro
@@ -59,7 +59,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("explorer_on_wheelchair"), "description/urdf", "simulation.urdf.xacro"]
+                [FindPackageShare("explorer_on_wheelchair"), "description/urdf", "simulation_ign.urdf.xacro"]
             ),
         ]
     )
@@ -131,11 +131,18 @@ def generate_launch_description():
             ],
     )
 
-    spawn_entity = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        arguments=["-topic", "robot_description", "-entity", "explorer_on_wheelchair"],
+    gz_spawn_entity = Node(
+        package="ros_gz_sim",
+        executable="create",
         output="screen",
+        arguments=[
+            "-topic",
+            "/robot_description",
+            "-name",
+            "explorer_on_wheelchair",
+            "-allow_renaming",
+            "true",
+        ],
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -182,9 +189,9 @@ def generate_launch_description():
         spacenav_arg,
         spacenav_node,
         gui_control_node,
-        gazebo,
+        ignition,
         node_robot_state_publisher,
-        spawn_entity,
+        gz_spawn_entity,
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
         rviz_node,
