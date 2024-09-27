@@ -35,3 +35,24 @@ To control the wheelchair, open an other terminal and run `teleop`
 ```
 ros2 run ros2_control_wheelchair teleop
 ```
+
+## Launch the simulation with position command only
+
+To launch the simulation in Gazebo, open a terminal and launch the `simu_pos_only.launch.py`.  
+
+```
+ros2 launch explorer_on_wheelchair simu_pos_only_.launch.py
+```
+
+You can run the simulation with some arguments :
+
+* `gui:=true` to activate RViz
+* `spacenav:=false` to deactivate spacenav
+
+To control the explorer you can use the GUI or a space mouse.
+
+To control the wheelchair, open an other terminal and run `teleop`
+
+```
+ros2 run ros2_control_wheelchair teleop
+```
