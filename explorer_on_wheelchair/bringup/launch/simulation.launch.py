@@ -14,7 +14,7 @@
 
 import os
 import xacro
-from ament_index_python.packages import get_package_share_path
+from ament_index_python.packages import get_package_share_path, get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition
@@ -46,11 +46,24 @@ def generate_launch_description():
         default_value='True',
         description='If the spacenav 3D mouse is used')
 
-    ignition = IncludeLaunchDescription(
+    world = os.path.join(
+        get_package_share_directory('ros2_control_explorer'),
+        'description/worlds',
+        'simu.world'
+    )
+
+    ignition_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [FindPackageShare("ros_gz_sim"), "/launch/gz_sim.launch.py"]
         ),
-        launch_arguments={"gz_args": " -r -v 4 empty.sdf"}.items(),
+        launch_arguments={'gz_args': ['-r -s -v4 ', world], 'on_exit_shutdown': 'true'}.items()
+    )
+
+    ignition_client = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [FindPackageShare("ros_gz_sim"), "/launch/gz_sim.launch.py"]
+        ),
+        launch_arguments={'gz_args': '-g -v4 '}.items()
     )
 
     # Get URDF via xacro
@@ -189,7 +202,8 @@ def generate_launch_description():
         spacenav_arg,
         spacenav_node,
         gui_control_node,
-        ignition,
+        ignition_server,
+        ignition_client,
         node_robot_state_publisher,
         gz_spawn_entity,
         joint_state_broadcaster_spawner,

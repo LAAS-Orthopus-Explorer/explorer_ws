@@ -15,6 +15,8 @@
   
   <xacro:gripper_pincette/>
 
+  <link name="camera_explorer"/>
+
   <link name="fixation">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -47,10 +49,10 @@
     <child link="base_link"/>
   </joint>
 
-    <joint name="joint_6" type="revolute">
+  <joint name="joint_6" type="revolute">
     <parent link="link_5"/>
     <child link="structure"/>
-    <origin xyz="0 0.090 0.083" rpy="${-(65*pi)/180} 0 0"/>
+    <origin xyz="0 0.090 0.083" rpy="0 ${(65*pi)/180} ${pi/2}"/>
     <axis xyz="0 0 1"/>
     <limit effort="1000.0" lower="${-pi}" upper="${pi}" velocity="2.5"/>
   </joint>
@@ -61,12 +63,18 @@
     <origin xyz="0.011 0 0.15" rpy="0 0 0"/>
   </joint>
 
+  <joint name="camera_joint" type="fixed">
+    <parent link="structure"/>
+    <child link="camera_explorer"/>
+    <origin xyz="0.011 0 0.105" rpy="0 ${-pi/2} 0"/>
+  </joint>
 
   <joint name="joint-tool" type="fixed">
     <parent link="ft_frame"/>
     <child link="tool0"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
+
   
   <xacro:include filename="$(find explorer_on_wheelchair)/description/ros2_control/simulation.ros2_control.xacro" />
    
