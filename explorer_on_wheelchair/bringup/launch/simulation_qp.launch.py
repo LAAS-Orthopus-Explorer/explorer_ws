@@ -18,7 +18,7 @@ from ament_index_python.packages import get_package_share_path, get_package_shar
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.actions import RegisterEventHandler
-from launch.event_handlers import OnProcessExit
+from launch.event_handlers import OnProcessExit, OnExecutionComplete
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
@@ -55,9 +55,9 @@ def generate_launch_description():
     
 
     world = os.path.join(
-        get_package_share_directory('ros2_control_explorer'),
+        get_package_share_directory('explorer_on_wheelchair'),
         'description/worlds',
-        'simu.world'
+        'empty_world.world'
     )
 
     ignition_server = IncludeLaunchDescription(
@@ -198,6 +198,31 @@ def generate_launch_description():
         arguments=["diff_drive_base_controller", "--controller-manager", "/controller_manager"],
     )
 
+    head_position_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["head_position_controller", "--controller-manager", "/controller_manager"],
+    )
+
+    joy_node = Node(
+        package="joy",
+        executable="joy_node",
+        output="screen",
+    )
+
+    wheelchair_controller_node = Node(
+        package="ros2_control_wheelchair",
+        executable="wheelchair_controller",
+        output="screen",
+    )
+
+    head_controller_node = Node(
+        package="ros2_control_wheelchair",
+        executable="head_controller",
+        output="screen",
+    )
+
+
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -242,9 +267,9 @@ def generate_launch_description():
     register_event_handler = []
     register_event_handler.append(
         RegisterEventHandler(
-                event_handler=OnProcessExit(
+                event_handler=OnExecutionComplete(
                     target_action=gz_spawn_entity,
-                    on_exit=[joint_state_broadcaster_spawner],
+                     on_completion=[joint_state_broadcaster_spawner],
                 )
         )
     )
@@ -260,7 +285,31 @@ def generate_launch_description():
         RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=joint_state_broadcaster_spawner,
+                    on_exit=[head_position_controller_spawner],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster_spawner,
                     on_exit=[robot_controller_spawner],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster_spawner,
+                    on_exit=[spacenav_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=spacenav_node,
+                    on_exit=[spacenav_driver_node],
                 )
         )
     )
@@ -284,7 +333,31 @@ def generate_launch_description():
         RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=robot_controller_spawner,
+                    on_exit=[output_integrator_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=robot_controller_spawner,
                     on_exit=[rviz_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=diff_drive_base_controller_spawner,
+                    on_exit=[wheelchair_controller_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=head_position_controller_spawner,
+                    on_exit=[head_controller_node],
                 )
         )
     )
@@ -293,11 +366,9 @@ def generate_launch_description():
         spacenav_arg,
         ignition_server,
         ignition_client,
-        spacenav_node,
-        spacenav_driver_node,
         node_robot_state_publisher,
-        output_integrator_node,
         gz_spawn_entity,
+        joy_node,
         gui_control_node,
         start_gazebo_ros_bridge_cmd,
         bridge,

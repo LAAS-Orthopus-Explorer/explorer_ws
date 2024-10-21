@@ -167,6 +167,28 @@
       </sensor>
     </gazebo>
 
+    <gazebo reference="user_vision_camera">
+      <sensor name="camera" type="camera">
+        <camera>
+          <optical_frame_id>user_vision_camera</optical_frame_id>
+          <horizontal_fov>1.047</horizontal_fov>
+          <image>
+              <width>1200</width>
+              <height>600</height>
+          </image>
+          <clip>
+              <near>0.05</near>
+              <far>100</far>
+          </clip>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>true</visualize>
+        <topic>user_vision</topic>
+        <enable_metrics>false</enable_metrics>
+      </sensor>
+    </gazebo>
+
   </xacro:macro>
 
 </robot>

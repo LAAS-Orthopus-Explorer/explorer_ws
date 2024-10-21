@@ -47,7 +47,7 @@ def generate_launch_description():
         description='If the spacenav 3D mouse is used')
 
     world = os.path.join(
-        get_package_share_directory('ros2_control_explorer'),
+        get_package_share_directory('explorer_on_wheelchair'),
         'description/worlds',
         'simu.world'
     )

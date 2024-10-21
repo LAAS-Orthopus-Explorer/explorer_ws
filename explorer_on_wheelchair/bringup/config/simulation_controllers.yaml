@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
+    update_rate: 100  # Hz
     use_sim_time: true
 
     joint_state_broadcaster:
@@ -16,6 +16,9 @@ controller_manager:
       type: forward_command_controller/ForwardCommandController
 
     gripper_controller:
+      type: forward_command_controller/ForwardCommandController
+
+    head_position_controller:
       type: forward_command_controller/ForwardCommandController
 
 joint_state_broadcaster:
@@ -124,4 +127,12 @@ gripper_controller:
   ros__parameters:
     joints:
       - right_finger_joint
+    interface_name: position
+
+head_position_controller:
+  ros__parameters:
+    joints:
+      - left_right_head_joint
+      - up_down_head_joint
+      
     interface_name: position

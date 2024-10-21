@@ -17,6 +17,8 @@
 
   <link name="camera_explorer"/>
 
+  <link name="user_vision_camera"/>
+
   <link name="fixation">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -67,6 +69,12 @@
     <parent link="structure"/>
     <child link="camera_explorer"/>
     <origin xyz="0.011 0 0.105" rpy="0 ${-pi/2} 0"/>
+  </joint>
+
+  <joint name="eye_camera_joint" type="fixed">
+    <parent link="head_up_down"/>
+    <child link="user_vision_camera"/>
+    <origin xyz="0.1 0 0" rpy="0 0 0"/>
   </joint>
 
   <joint name="joint-tool" type="fixed">
