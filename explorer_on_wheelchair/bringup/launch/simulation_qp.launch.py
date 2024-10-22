@@ -267,9 +267,9 @@ def generate_launch_description():
     register_event_handler = []
     register_event_handler.append(
         RegisterEventHandler(
-                event_handler=OnExecutionComplete(
+                event_handler=OnProcessExit(
                     target_action=gz_spawn_entity,
-                     on_completion=[joint_state_broadcaster_spawner],
+                    on_exit=[joint_state_broadcaster_spawner],
                 )
         )
     )
