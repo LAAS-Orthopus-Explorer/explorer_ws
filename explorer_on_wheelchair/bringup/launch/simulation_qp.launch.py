@@ -138,30 +138,37 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="screen",
-        parameters=[robot_description],
+        parameters=[robot_description, {'use_sim_time': use_sim_time}],
     )
 
     input_integrator_node = Node(
         package="ros2_control_explorer",
         executable="input_integrator",
         name="input_integrator",
+        parameters=[
+            {'use_sim_time': use_sim_time}
+        ],
     )
 
-    
     qp_solving_node = Node(
         package="ros2_control_explorer",
         executable="qp_solving",
         parameters=[
             config,
             robot_description,
-            robot_description_semantic
-            ],
+            robot_description_semantic,
+            {'use_sim_time': use_sim_time}
+        ],
     )
 
     output_integrator_node = Node(
         package="ros2_control_explorer",
         executable="output_integrator",
         name="output_integrator",
+        parameters=[
+            {'use_sim_time': use_sim_time}
+        ],
+
     )
 
     gz_spawn_entity = Node(
@@ -300,22 +307,6 @@ def generate_launch_description():
     register_event_handler.append(
         RegisterEventHandler(
                 event_handler=OnProcessExit(
-                    target_action=joint_state_broadcaster_spawner,
-                    on_exit=[spacenav_node],
-                )
-        )
-    )
-    register_event_handler.append(
-        RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=spacenav_node,
-                    on_exit=[spacenav_driver_node],
-                )
-        )
-    )
-    register_event_handler.append(
-        RegisterEventHandler(
-                event_handler=OnProcessExit(
                     target_action=robot_controller_spawner,
                     on_exit=[qp_solving_node],
                 )
@@ -366,6 +357,8 @@ def generate_launch_description():
         spacenav_arg,
         ignition_server,
         ignition_client,
+        spacenav_node,
+        spacenav_driver_node,
         node_robot_state_publisher,
         gz_spawn_entity,
         joy_node,
