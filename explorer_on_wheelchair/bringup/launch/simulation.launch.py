@@ -17,6 +17,8 @@ import xacro
 from ament_index_python.packages import get_package_share_path, get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import RegisterEventHandler
+from launch.event_handlers import OnProcessExit, OnExecutionComplete
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
@@ -26,30 +28,36 @@ import launch_ros.actions
 
 
 def generate_launch_description():
-
+    # Initialize Arguments
+    gui = LaunchConfiguration("gui")
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+    spacenav = LaunchConfiguration('spacenav')
     # Declare arguments
     declared_arguments = []
     declared_arguments.append(
         DeclareLaunchArgument(
             "gui",
-            default_value="false",
+            default_value="true",
             description="Start RViz2 automatically with this launch file.",
         )
     )
-
-    # Initialize Arguments
-    gui = LaunchConfiguration("gui")
-    spacenav = LaunchConfiguration('spacenav')
+    declared_arguments.append(
+    DeclareLaunchArgument(
+            'use_sim_time',
+            default_value=use_sim_time,
+            description='If true, use simulated clock')
+    )
 
     spacenav_arg = DeclareLaunchArgument(
         name='spacenav',
         default_value='True',
         description='If the spacenav 3D mouse is used')
+    
 
     world = os.path.join(
         get_package_share_directory('explorer_on_wheelchair'),
         'description/worlds',
-        'simu.world'
+        'empty_world.world'
     )
 
     ignition_server = IncludeLaunchDescription(
@@ -93,7 +101,7 @@ def generate_launch_description():
     robot_description_semantic = {"robot_description_semantic": semantic_content}
     
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("explorer_on_wheelchair"), "description/rviz", "simulation.rviz"]
+        [FindPackageShare("ros2_control_explorer"), "description/rviz", "view_robot.rviz"]
     )
 
     ## Declare SpaceNav nodes (driver & input_device)
@@ -130,18 +138,37 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="screen",
-        parameters=[robot_description],
+        parameters=[robot_description, {'use_sim_time': use_sim_time}],
     )
 
-    
-    spacenav_trajectory_qp_node = Node(
+    input_integrator_node = Node(
         package="ros2_control_explorer",
-        executable="spacenav_trajectory_qp",
+        executable="input_integrator",
+        name="input_integrator",
+        parameters=[
+            {'use_sim_time': use_sim_time}
+        ],
+    )
+
+    qp_solving_node = Node(
+        package="ros2_control_explorer",
+        executable="qp_solving",
         parameters=[
             config,
             robot_description,
-            robot_description_semantic
-            ],
+            robot_description_semantic,
+            {'use_sim_time': use_sim_time}
+        ],
+    )
+
+    output_integrator_node = Node(
+        package="ros2_control_explorer",
+        executable="output_integrator",
+        name="output_integrator",
+        parameters=[
+            {'use_sim_time': use_sim_time}
+        ],
+
     )
 
     gz_spawn_entity = Node(
@@ -152,11 +179,12 @@ def generate_launch_description():
             "-topic",
             "/robot_description",
             "-name",
-            "explorer_on_wheelchair",
+            "explorer",
             "-allow_renaming",
             "true",
         ],
     )
+
 
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
@@ -167,8 +195,9 @@ def generate_launch_description():
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["explorer_controller", "--controller-manager", "/controller_manager"],
+        arguments=["forward_position_controller", "--controller-manager", "/controller_manager"],
     )
+
 
     diff_drive_base_controller_spawner = Node(
         package="controller_manager",
@@ -176,11 +205,30 @@ def generate_launch_description():
         arguments=["diff_drive_base_controller", "--controller-manager", "/controller_manager"],
     )
 
-    gripper_controller_spawner = Node(
+    head_position_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["gripper_controller", "--controller-manager", "/controller_manager"],
+        arguments=["head_position_controller", "--controller-manager", "/controller_manager"],
     )
+
+    joy_node = Node(
+        package="joy",
+        executable="joy_node",
+        output="screen",
+    )
+
+    wheelchair_controller_node = Node(
+        package="ros2_control_wheelchair",
+        executable="wheelchair_controller",
+        output="screen",
+    )
+
+    head_controller_node = Node(
+        package="ros2_control_wheelchair",
+        executable="head_controller",
+        output="screen",
+    )
+
 
     rviz_node = Node(
         package="rviz2",
@@ -196,23 +244,127 @@ def generate_launch_description():
         package='rqt_armcontrol',
         executable='rqt_armcontrol',
         condition=IfCondition(gui)
+    )
+    
+    bridge_config = os.path.join(
+        get_package_share_directory('ros2_control_explorer'),
+        'config',
+        'bridge.yaml'
+    )
+
+    start_gazebo_ros_bridge_cmd = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '--ros-args',
+            '-p',
+            f'config_file:={bridge_config}',
+        ],
+        output='screen',
+    )
+
+ # Bridge
+    bridge = Node(
+        package='ros_gz_image',
+        executable='image_bridge',
+        arguments=['camera', 'depth_camera', 'rgbd_camera/image', 'rgbd_camera/depth_image'],
+        output='screen'
+    )
+    
+    register_event_handler = []
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=gz_spawn_entity,
+                    on_exit=[joint_state_broadcaster_spawner],
+                )
         )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster_spawner,
+                    on_exit=[diff_drive_base_controller_spawner,],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster_spawner,
+                    on_exit=[head_position_controller_spawner],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=joint_state_broadcaster_spawner,
+                    on_exit=[robot_controller_spawner],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=robot_controller_spawner,
+                    on_exit=[qp_solving_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=robot_controller_spawner,
+                    on_exit=[input_integrator_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=robot_controller_spawner,
+                    on_exit=[output_integrator_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=robot_controller_spawner,
+                    on_exit=[rviz_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=diff_drive_base_controller_spawner,
+                    on_exit=[wheelchair_controller_node],
+                )
+        )
+    )
+    register_event_handler.append(
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=head_position_controller_spawner,
+                    on_exit=[head_controller_node],
+                )
+        )
+    )
 
     nodes = [
         spacenav_arg,
-        spacenav_node,
-        gui_control_node,
         ignition_server,
         ignition_client,
+        spacenav_node,
+        spacenav_driver_node,
         node_robot_state_publisher,
         gz_spawn_entity,
-        joint_state_broadcaster_spawner,
-        robot_controller_spawner,
-        rviz_node,
-        spacenav_driver_node,
-        spacenav_trajectory_qp_node,
-        diff_drive_base_controller_spawner,
-        gripper_controller_spawner,
+        joy_node,
+        gui_control_node,
+        start_gazebo_ros_bridge_cmd,
+        bridge,
     ]
 
-    return LaunchDescription(declared_arguments + nodes)
+    return LaunchDescription(declared_arguments + nodes + register_event_handler)
