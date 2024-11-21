@@ -191,6 +191,8 @@ def generate_launch_description():
         arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
     )
 
+    delayed_joint_state = TimerAction(period=10.0, actions=[joint_state_broadcaster_spawner])
+
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -238,7 +240,7 @@ def generate_launch_description():
         condition=IfCondition(gui),
     )
     
-    delayed_rviz = TimerAction(period=5.0,actions=[rviz_node])
+    delayed_rviz = TimerAction(period=15.0,actions=[rviz_node])
     
     # Declare GUI controller node
     gui_control_node = Node(
@@ -277,7 +279,7 @@ def generate_launch_description():
         RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=gz_spawn_entity,
-                    on_exit=[joint_state_broadcaster_spawner],
+                    on_exit=[delayed_joint_state],
                 )
         )
     )
@@ -285,7 +287,7 @@ def generate_launch_description():
         RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=joint_state_broadcaster_spawner,
-                    on_exit=[diff_drive_base_controller_spawner,],
+                    on_exit=[diff_drive_base_controller_spawner],
                 )
         )
     )
