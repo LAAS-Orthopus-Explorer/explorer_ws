@@ -7,7 +7,7 @@
  
   <xacro:wheelchair/>
 
-  <xacro:include filename="$(find ros2_control_explorer)/description/urdf/explorer_old_description.urdf.xacro" />
+  <xacro:include filename="$(find ros2_control_explorer)/description/urdf/explorer_POC1_description.urdf.xacro" />
 
   <xacro:explorer_old_description/>
 
