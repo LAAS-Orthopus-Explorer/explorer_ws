@@ -1,6 +1,7 @@
 [submodule "explorer_stack"]
 	path = explorer_stack
-	url = ../explorer_stack.git
+	url = git@github.com:LAAS-Orthopus-Explorer/explorer_stack.git
+	branch = master
 [submodule "wheelchair_stack"]
 	path = wheelchair_stack
-	url = ../wheelchair_stack.git
+	url = git@github.com:ORTHOPUS-EXPLORER/wheelchair_stack.git
