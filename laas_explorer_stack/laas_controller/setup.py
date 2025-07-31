@@ -23,6 +23,8 @@ setup(
             'laas_hello = laas_controller.main:main',
             'laas_ik = laas_controller.inverse_kinematics_node:main',
             'laas_fk = laas_controller.fk_orthopus_node:main',
+            'laas_mpc_orthopus = laas_controller.mpc_orthopus:main',
+            'save_urdf = laas_controller.save_urdf:main',
         ],
     },
 )
