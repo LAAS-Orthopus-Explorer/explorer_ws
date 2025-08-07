@@ -6,8 +6,6 @@ from std_msgs.msg import String
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 import pinocchio as pin
 import tempfile
-from sensor_msgs.msg import JointState
-from std_msgs.msg import Float64MultiArray
 
 import numpy as np
 import yaml
@@ -172,6 +170,12 @@ class ModelCfg:
             u[11]
             )
     
+    '''def init_state(self):
+        x = np.zeros(self.nx)
+        x[self.nq-self.njoint:self.nq] = self.mm_arm_init_pose
+        return x
+    '''
+
 @configclass
 class CostCfg:
     coefs_keys = {'wPos_arm':1, 'qVelBase':1} # 3 Means the dimension of the position
@@ -189,10 +193,10 @@ class CostCfg:
         return e
 
     
-    def cost_vel_base(self, u, x, traj_base, traj_arm, target, obstacles):
+   
+     def cost_vel_base(self, u, x, traj_base, traj_arm, target, obstacles):
         e_ctrl = ca.sumsqr(u / self.ubu)
         return e_ctrl 
-    
     cost_terms = [
         CostTerm(func=cost_arm_traj, weight_key='wPos_arm'),
         CostTerm(func=cost_vel_base, weight_key='qVelBase'),
@@ -226,145 +230,76 @@ class OrthopusKinematicsCfg():
     cost = CostCfg()
     const = ConstCfg()
 
-class MpcControllerNode(Node):
-    def __init__(self):
-        super().__init__('mpc_controller_node')
-
-        # Initialize configuration
-        cfg = OrthopusKinematicsCfg()
-        self.orthopus = ManagerMpcAcados(cfg)
-        self.campero = ManagerCasadiModel(cfg)
-
-        # MPC
-        self.dt = 0.01
-        self.horizon = 20
-
-        # Envirement parameters
-        nb_obstacles = 0
-        self.orthopus.obstacles_len = 7 * nb_obstacles
-        self.orthopus.traj_base_len = 7 * nb_obstacles
-        self.orthopus.update_ref_len()
-
-        # Weight cost
-        self.cost_coefs = {
-            'wPos_arm': {'_1': 1e10},
-            'qVelBase': {'_1': 1000}
-        }
-
-        self.publisher_u = self.create_publisher(Float64MultiArray, '/mpc_command', 10)
-        #self.subscriber = self.create_subscription(JointState, '/joint_states', self.joint_state_callback, 10)
-
-        #self.get_logger().info('MPC Node initialized and listening to /joint_states')
-
-    '''def joint_state_callback(self, msg: JointState):
-        if len(msg.position) < self.orthopus.nq:
-            self.get_logger().warn('JointState has insufficient positions.')
-            return
-
-        x = np.array(msg.position[:self.orthopus.nq])
-        u = np.zeros(self.orthopus.nu)
-
-        # Conpute references
-        cost_refs = self.orthopus.extract_cost_coefs(self.cost_coefs)
-        r = 0.3
-
-        #########
-        print("Cost: ",orthopus.compute_cost(u, x,
-                                cost_coefs_refs, 
-                                r1*np.ones((orthopus.traj_base_len)), 
-                                r1*np.ones((orthopus.traj_arm_len)), 
-                                r1*np.ones((orthopus.target_len)), 
-                                r1*np.ones((orthopus.obstacles_len))))
-
-        # Integrator
-        orthopus.create_integrator(dt, True)
-
-        orthopus.integrator.set("x", x)
-        orthopus.integrator.set("u", u)
-        status = orthopus.integrator.solve()
-        if status != 0:
-            print(f"integrator error: status {status} =! 0")
-
-        x = orthopus.integrator.get("x")
-        print("integrated state:", x)
-
-        # MPC Solver
-        orthopus.create_ocp_solver(x, horizon,
-                                    np.array([dt for i in range(horizon)]), 
-                                    sum(np.array([dt for i in range(horizon)])), 
-                                    True, True)
-        
-        r2 = r1
-        refs = []
-        for j in range(horizon+1):
-            refs.append(np.hstack((
-                cost_coefs_refs, 
-                r2*np.ones((orthopus.traj_base_len)), 
-                r2*np.ones((orthopus.traj_arm_len)), 
-                r2*np.ones((orthopus.target_len)), 
-                r2*np.ones((orthopus.obstacles_len))
-            )))
-        print(f'MPC solver reference : {refs}')
-        x_mpc, u_mpc, status = orthopus.solve_ocp(x, horizon, refs)
-        print("MPC states x_mpc:", x_mpc)
-        print("MPC commands:", u_mpc) # list of commands for each step of the MPC solver
-        print("MPC status:", status)
-
-    ########
-
-        refs = [
-            np.hstack((
-                cost_refs,
-                r * np.ones(self.orthopus.traj_base_len),
-                r * np.ones(self.orthopus.traj_arm_len),
-                r * np.ones(self.orthopus.target_len),
-                r * np.ones(self.orthopus.obstacles_len)
-            ))
-            for _ in range(self.horizon + 1)
-        ]
-
-        # Integrator
-        self.orthopus.create_integrator(self.dt, True)
-        self.orthopus.integrator.set("x", x)
-        self.orthopus.integrator.set("u", u)
-        status = self.orthopus.integrator.solve()
-
-        if status != 0:
-            self.get_logger().error(f"Integrator failed with status {status}")
-            return
-
-        x_integrated = self.orthopus.integrator.get("x")
-
-        # MPC solver
-        self.orthopus.create_ocp_solver(
-            x_integrated,
-            self.horizon,
-            np.full(self.horizon, self.dt),
-            self.horizon * self.dt,
-            True, True
-        )
-
-        x_mpc, u_mpc, status = self.orthopus.solve_ocp(x_integrated, self.horizon, refs)
-
-        if status != 0:
-            self.get_logger().error(f"MPC solve failed with status {status}")
-            return
-
-        # Publish commando u
-        cmd_msg = Float64MultiArray()
-        cmd_msg.data = u_mpc[0].tolist()
-        self.publisher_u.publish(cmd_msg)
-        self.get_logger().info(f"Published MPC command u[0]: {u_mpc[0]}")'''
-
-
-def main(args=None):
-    rclpy.init(args=args)
-    node = MpcControllerNode()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
-
 
 if __name__ == '__main__':
-    main()
-   
+    #main()
+    orthopus = ManagerMpcAcados(OrthopusKinematicsCfg())
+    campero = ManagerCasadiModel(OrthopusKinematicsCfg())
+    print("robot model:", orthopus.name_robot)
+    '''x = np.zeros(campero.nx)
+    u = np.zeros(campero.nu)
+    print(campero.x_state2pin_state(x))
+    print(campero.u_state2pin_vel(x))
+    print(campero.T_effector(x))'''
+
+    #x = orthopus.init_state()    
+    x = [0.1, -0.2, 0.15, -0.1, 0.05, 0.0, 0.2, -0.1, 0.1,  0.0, -0.05, 0.05]  # 12 valores
+    x = np.array(x)
+    print("x",x)
+    u = np.zeros(orthopus.nu)
+    dt = 0.01
+    horizon = 20
+
+    # get in toutch with parameters
+    nb_obstacles = 0
+    orthopus.obstacles_len = 7*nb_obstacles # In this software obstacles are set as capsules [pos A, pose B, radius]
+    orthopus.traj_base_len = 7*nb_obstacles
+    orthopus.update_ref_len() # update the length of the parameters vector after obstacles length is set
+    #cost_coefs = {'wPos_arm': {'_1': 1., '_2': 2., '_3': 1.}, 'qVelBase': {'_1': 1., '_2': 1., '_3': 1., '_4': 1.,'_5': 1., '_6': 1., '_7': 1., '_8': 1.,'_9': 1., '_10': 1., '_11': 1., '_12': 1.}}
+    #cost_coefs = {'wPos_arm': {'_1': 1000., '_2': 2000., '_3': 1000.}}
+    cost_coefs = {'wPos_arm': {'_1': 10000000000}, 'qVelBase': {'_1': 1000}}
+
+    cost_coefs_refs = orthopus.extract_cost_coefs(cost_coefs)
+    r1 = 0.3
+    print("Cost: ",orthopus.compute_cost(u, x,
+                            cost_coefs_refs, 
+                            r1*np.ones((orthopus.traj_base_len)), 
+                            r1*np.ones((orthopus.traj_arm_len)), 
+                            r1*np.ones((orthopus.target_len)), 
+                            r1*np.ones((orthopus.obstacles_len))))
+
+    # Integrator
+    orthopus.create_integrator(dt, True)
+
+    orthopus.integrator.set("x", x)
+    orthopus.integrator.set("u", u)
+    status = orthopus.integrator.solve()
+    if status != 0:
+        print(f"integrator error: status {status} =! 0")
+
+    x = orthopus.integrator.get("x")
+    print("integrated state:", x)
+
+    # MPC Solver
+    orthopus.create_ocp_solver(x, horizon,
+                                np.array([dt for i in range(horizon)]), 
+                                sum(np.array([dt for i in range(horizon)])), 
+                                True, True)
+    
+    r2 = r1
+    refs = []
+    for j in range(horizon+1):
+        refs.append(np.hstack((
+            cost_coefs_refs, 
+            r2*np.ones((orthopus.traj_base_len)), 
+            r2*np.ones((orthopus.traj_arm_len)), 
+            r2*np.ones((orthopus.target_len)), 
+            r2*np.ones((orthopus.obstacles_len))
+        )))
+    print(f'MPC solver reference : {refs}')
+    x_mpc, u_mpc, status = orthopus.solve_ocp(x, horizon, refs)
+    print("MPC states x_mpc:", x_mpc)
+    print("MPC commands:", u_mpc) # list of commands for each step of the MPC solver
+    print("MPC status:", status)
+
+    
