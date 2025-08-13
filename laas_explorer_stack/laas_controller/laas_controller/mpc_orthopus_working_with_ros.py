@@ -314,7 +314,7 @@ class MpcControllerNode(Node):
         self.orthopus.traj_arm_len = 12
         self.orthopus.update_ref_len() # update the length of the parameters vector after obstacles length is set
        
-        wdq = 1.
+        wdq = 0.
         # Weight cost
         '''self.cost_coefs = {
             'wPos_arm': {'1': 1.0},
@@ -323,7 +323,7 @@ class MpcControllerNode(Node):
         self.cost_coefs = {'wPos_arm': {'1': 1.}, 
         'qVelBase': {'1': wdq, '2': wdq, '3': wdq, '4': wdq,'5': wdq, '6': wdq, '7': wdq, '8': wdq,'9': wdq, '10': wdq, '11': wdq, '12': wdq}
         }
-        self.publisher_pos = self.create_publisher(Float64MultiArray, '/forward_position_controller/commands', 10)
+        self.publisher_u = self.create_publisher(Float64MultiArray, '/mpc_command', 10)
         self.subscriber = self.create_subscription(JointState, '/joint_states', self.joint_state_callback, 10)
 
         self.get_logger().info('MPC Node initialized and listening to /joint_states')
@@ -331,9 +331,6 @@ class MpcControllerNode(Node):
         #self.x = np.array([0.1, -0.2, 0.15, -0.1, 0.05, 0.0, -0.2, -0.1, -0.1,  0.0, -0.05, 0.05])  # 12 values
         self.x = np.zeros(self.orthopus.nx)
         self.u = np.zeros(self.orthopus.nu)
-
-        # Position command (initialized from first joint state received)
-        self.q_cmd = None
 
         # Integrator
         self.orthopus.create_integrator(self.dt, True)
@@ -347,33 +344,20 @@ class MpcControllerNode(Node):
         self.lates_joint_position = None 
 
         # Timer periods in seconds 
-        self.__controller_time_period = 0.005
-        self.__mpc_time_period = 0.02
-        
-        # Create the timers to call the callbacks functions
-        self.controller_timer = self.create_timer(self.__controller_time_period, self.__controller_callback)
-        self.mpc_timer = self.create_timer(self.__mpc_time_period, self.__mpc_callback)
+        self.controller_time_period = 0.005
+        self.mpc_time_period = 0.02
 
+        self.create_timer()
 
     def joint_state_callback(self, msg: JointState):
         if len(msg.position) < self.orthopus.nq:
             self.get_logger().warn('JointState has insufficient positions.')
             return
 
-        self.lates_joint_position = np.array(msg.position[:self.orthopus.nq])
+        #x = np.array(msg.position[:self.orthopus.nq])
 
-        # Initialize q_cmd only once
-        if self.q_cmd is None:
-            self.q_cmd = self.lates_joint_position.copy()
-            self.get_logger().info("q_cmd initialized from joint states.")
-
-    def __update_state(self):
-        if self.lates_joint_position is not None:
-            self.x[:self.orthopus.nq] = self.lates_joint_position
-        else:
-            self.get_logger().warn("No joint received yet from joint_states")
-
-    '''def __state_observer(self):
+        #########
+     
 
         self.orthopus.integrator.set("x", self.x)
         self.orthopus.integrator.set("u", self.u)
@@ -383,13 +367,13 @@ class MpcControllerNode(Node):
 
         self.x = self.orthopus.integrator.get("x")
         print("integrated state:", self.x)
-        #if new callback value:
-        #    self.x = callback'''
 
-    def __update_command(self):
-        # Reference trajectory for MPC cost
+        #if new callback value:
+        #    self.x = callback
+       
+
         cost_coefs_refs = self.orthopus.extract_cost_coefs(self.cost_coefs)
-        r1 = 0.05
+        r1 = 0.2
         ref = np.hstack((
                 cost_coefs_refs, 
                 r1*np.zeros((self.orthopus.traj_base_len)), 
@@ -409,26 +393,15 @@ class MpcControllerNode(Node):
 
         self.u = u_mpc[0]
 
-    def __pub_command(self):
-       
         # Publish command u
-       if self.q_cmd is None:
-            return
-       cmd_msg = Float64MultiArray()
-       cmd_msg.data = self.q_cmd.tolist()
-       self.publisher_pos.publish(cmd_msg)
+        cmd_msg = Float64MultiArray()
+        cmd_msg.data = u_mpc[0].tolist()
+        self.publisher_u.publish(cmd_msg)
+        self.get_logger().info(f"Published MPC command u[0]: {u_mpc[0]}")
 
-    def __controller_callback(self):
-        self.__update_state()
+    ########
 
-        if self.q_cmd is not None:
-            # Integrate velocities into position
-            self.q_cmd = self.q_cmd + self.u * self.__controller_time_period
-
-        self.__pub_command()
-
-    def __mpc_callback(self):
-        self.__update_command()
+      
 
 
 def main(args=None):

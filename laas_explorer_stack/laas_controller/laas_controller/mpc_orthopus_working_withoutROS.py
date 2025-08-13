@@ -178,7 +178,7 @@ class ModelCfg:
 
 @configclass
 class CostCfg:
-    coefs_keys = {'wPos_arm':1, 'qVelBase':1} # 3 Means the dimension of the position
+    coefs_keys = {'wPos_arm':1, 'qVelBase':12} # 3 Means the dimension of the position
     #coefs_keys = {'wPos_arm':1}
 
     def cost_arm_traj(self, u, x, traj_base, traj_arm, target, obstacles):
@@ -194,7 +194,7 @@ class CostCfg:
 
     
    
-     def cost_vel_base(self, u, x, traj_base, traj_arm, target, obstacles):
+    def cost_vel_base(self, u, x, traj_base, traj_arm, target, obstacles):
         e_ctrl = ca.sumsqr(u / self.ubu)
         return e_ctrl 
     cost_terms = [
