@@ -8,7 +8,7 @@ import pinocchio as pin
 import tempfile
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
-from geometry_msgs.msg import Twist, PoseStamped
+
 import numpy as np
 import yaml
 from o2r_pi2_controllers.utils import (ca_rot2quat, 
@@ -24,9 +24,7 @@ from o2r_pi2_controllers.utils import (ca_rot2quat,
                           ca_pose2M4x4,
                           list_deg2rad,
                           configclass,
-                          hamilton_prod,
-                          ca_quat72rot4)
-                          
+                          hamilton_prod)
 from o2r_pi2_controllers.utils_collision import ca_planar_distance_segment_to_segment, ca_planar_distance_point_to_segment, ca_cone_max_radius, ca_distance_cone_to_point, ca_distance_segment_to_segment, ca_distance_point_to_segment, ca_distance_cone_to_segment
 import casadi as ca
 from casadi import SX, Function, DM
@@ -63,7 +61,7 @@ from casadi import (
 )  # maths
 try:
     from romea_mobile_base_msgs.msg import TwoAxleSteeringCommand, OneAxleSteeringCommand, SkidSteeringCommand
-    from geometry_msgs.msg import Twist, PoseStamped
+    from geometry_msgs.msg import Twist
     from std_msgs.msg import Float64MultiArray, Float32, Bool
     from gesture_command.msg import RobStateMM6
 except:
@@ -75,8 +73,6 @@ import pinocchio.casadi as cpin
 from o2r_pi2_controllers.managers.manager_mpc_acados import ManagerMpcAcados, CostTerm, HardConstTerm, SoftConstTerm
 
 from o2r_pi2_controllers.managers import ManagerCasadiModel
-
-from scipy.spatial.transform import Rotation as R
 
 @configclass
 class ModelCfg:
@@ -154,25 +150,6 @@ class ModelCfg:
         t = self.ca_data.oMf[self.ca_model.getFrameId(name)].translation
         T_arm = vertcat(horzcat(R, t), np.array([[0., 0., 0., 1.]]))
         return T_arm
-    
-    '''def T_effector_target(self, target_pose):
-        pos = vertcat(target_pose[0], target_pose[1], target_pose[2])
-        quat = vertcat(target_pose[6], target_pose[3], target_pose[4], target_pose[5])
-        target = cpin.SE3(cpin.Quaternion(quat).matrix(), pos)
-        return target.homogeneous'''
-    
-    '''def T_effector_target(self, q):
-        R = ca_quat2rot(q[3:])
-        T = SX.eye(4)
-        T[0:3, 0:3] = R
-        T[0,3] = q[0]
-        T[1,3] = q[1]
-        T[2,3] = q[2]
-        return T'''
-    
-    def T_effector_target(self, q):
-        T = ca_quat72rot4(q)
-        return T
 
     
     def x_state2pin_state(self,x):
@@ -203,32 +180,79 @@ class ModelCfg:
             u[10],
             u[11]
             )
-
     
 @configclass
 class CostCfg:
     #coefs_keys = {'wPos_arm':1, 'qVelBase':12} # 3 Means the dimension of the position
     coefs_keys = {'wPos_arm':1,  'qVelBase':1}
+
+    '''def cost_arm_traj(self, u, x, traj_base, traj_arm, target, obstacles):
+        eff_pose = self.T_effector(x)
+        e_ee_traj = eff_pose[:3,3] - traj_arm[:3]
+        #e_ee_traj = eff_pose[:3,3] - [0.2,0.2,0.3]  #traj_arm[:3]
+        e = ca.sumsqr(e_ee_traj)
+        print("Trajectory_arm:",  traj_arm[:3])
+        print("error:", e_ee_traj)
+        print("costo:", ca.sumsqr(e_ee_traj))
+        print("Posición del efector con x=0:", eff_pose[:3, 3])
+        return e'''
     
-    # Cost function for pose in task space
+    '''# Function implemented by Remi for task space
     def cost_arm_traj(self, u, x, traj_base, traj_arm, target, obstacles):
         eff_pose = self.T_effector(x)
-        target_pose = self.T_effector_target(traj_arm)
-
-        e_pos = eff_pose[:3, 3] - target_pose[:3, 3]
-        R_error = eff_pose[:3, :3] @ target_pose[:3, :3]
-
-        e_rot = cpin.log3(R_error)
-        W_position = 1.0
-        W_rot = 0.1
-        e_ee = vertcat(W_position * e_pos, W_rot * e_rot)
+        e_ee_traj = eff_pose[:3, 3] - traj_arm[:3]
         a = 1.  
-        e = 1 - exp(-a * norm_2(e_ee)**2)
-        return e   
+        e = 1 - exp(-a * norm_2(e_ee_traj)**2)
+        return e'''
     
-    # Function for command u
+    '''def cost_arm_traj(self, u, x, traj_base, traj_arm, target, obstacles):
+        eff_pose = self.T_effector(x)
+        e_ee_traj = eff_pose[:3, 3] - traj_arm[:3]
+        error_norm = ca.norm_2(e_ee_traj)  
+        a = 100000000.0  
+        cost = 1 - ca.exp(-a * error_norm**2)
+        return cost'''
+        
+    '''def cost_arm_traj(self, u, x, traj_base, traj_arm, target, obstacles):
+        eff_pose = self.T_effector(x)
+        e_ee_traj = eff_pose[:3,3] - traj_arm[:3]
+        error_norm = ca.norm_2(e_ee_traj) 
+        a = 10.0 
+        return 1 - ca.exp(-a * error_norm**2)'''
+        
+    '''def cost_arm_traj(self, u, x, traj_base, traj_arm, target, obstacles):
+        e_ee_traj = x[:6] - traj_arm[:6]
+        e = ca.sumsqr(e_ee_traj)
+        print("joint ref:",  traj_arm[:6])
+        print("error:", e_ee_traj)
+        print("costo:", ca.sumsqr(e_ee_traj))
+        return e'''
+    # Function implemented by Remi for joint space given from example folder
+    def cost_arm_traj(self, u, x, traj_base, traj_arm, target, obstacles):
+        e_ee_traj = x[:12] - traj_arm[:12]
+        #a = 1.  
+        #e = 1 - exp(-a * norm_2(e_ee_traj)**2)
+        e = ca.sumsqr(e_ee_traj)
+        return e
+    
+    '''def cost_vel_base(self, u, x, traj_base, traj_arm, target, obstacles):
+        e_ctrl = ca.sumsqr(u / self.ubu)
+        return e_ctrl'''
+    
+    '''def cost_vel_base(self, u, x, traj_base, traj_arm, target, obstacles):
+        a = 1.0 
+        e_ctrl = 1 - ca.exp(-a * ca.sumsqr(u / self.ubu))
+        return e_ctrl'''
+    
+    '''def cost_vel_base(self, u, x, traj_base, traj_arm, target, obstacles):
+        a = 10.0  
+        normalized_u = u / self.ubu
+        e_ctrl = 1 - ca.exp(-a * ca.sumsqr(normalized_u))
+        return e_ctrl'''
+    
+    # Function implemented by Remi for command u from example folder
     def cost_vel_base(self, u, x, traj_base, traj_arm, target, obstacles):
-        return ca.sumsqr(u) 
+        return ca.sumsqr(u) #u / self.ubu
     
     cost_terms = [
         CostTerm(func=cost_arm_traj, weight_key='wPos_arm'),
@@ -246,7 +270,9 @@ class ConstCfg:
     lbu = -0.7*np.ones(12) # dq
     ubu =  0.7*np.ones(12)
 
-    # Limit constrains of the joint position from pinocchio URDF
+    # Limite constrains of the joint position
+    #lbx = -np.array([1000.,1000.,1000.,-1.34,2.2,2.71,3.14,3.57,2.6,3.14,3.57,2.6]) # q
+    #ubx = np.array([1000.,1000.,1000.,-1.34,2.2,2.71,3.14,3.57,2.6,3.14,3.57,2.6]) # q
 
     lbx = np.array([-2.97, -2.14, -2.97, -2.97, -1.8, -2.97, -1.05, -1.05, -1.05, -1.05, -1.05,  0.]) # q
     ubx = np.array([ 2.97, 2.14, 2.97, 2.97, 1.8,  2.97, 0.01,   0.01,   0.01,   0.01,   0.01,   1.05]) # q
@@ -286,7 +312,7 @@ class MpcControllerNode(Node):
         nb_obstacles = 0
         self.orthopus.obstacles_len = 7 * nb_obstacles
         self.orthopus.traj_base_len = 7 * nb_obstacles
-        self.orthopus.traj_arm_len = 7
+        self.orthopus.traj_arm_len = 12
         self.orthopus.update_ref_len() # update the length of the parameters vector after obstacles length is set
        
         wdq = 1.
@@ -299,15 +325,16 @@ class MpcControllerNode(Node):
         'qVelBase': {'1': wdq, '2': wdq, '3': wdq, '4': wdq,'5': wdq, '6': wdq, '7': wdq, '8': wdq,'9': wdq, '10': wdq, '11': wdq, '12': wdq}
         }'''
         self.publisher_pos = self.create_publisher(Float64MultiArray, '/forward_position_controller/commands', 10)
-
         self.subscriber = self.create_subscription(JointState, '/joint_states', self.joint_state_callback, 10)
-        self.subscriber = self.create_subscription(PoseStamped, '/target_arm_ee', self.target_arm_ee_callback, 10)
 
         self.get_logger().info('MPC Node initialized and listening to /joint_states')
 
+        #self.x = np.array([0.1, -0.2, 0.15, -0.1, 0.05, 0.0, -0.2, -0.1, -0.1,  0.0, -0.05, 0.05])  # 12 values
         self.x = np.zeros(self.orthopus.nx)
         self.u = np.zeros(self.orthopus.nu)
 
+        # Position command (initialized from first joint state received)
+        self.q_cmd = None
 
         # Integrator
         self.orthopus.create_integrator(self.dt, True)
@@ -319,8 +346,7 @@ class MpcControllerNode(Node):
                                     True, True)
         
         self.lates_joint_position = None 
-        self.q_cmd = None
-        self.latest_target_pose = None
+
         # idx_map: Gazebo -> Pinocchio
         self.idx_map = [5, 7, 2, 0, 1, 3, 10, 11, 9, 6, 8, 4]
 
@@ -351,30 +377,11 @@ class MpcControllerNode(Node):
             self.q_cmd = self.lates_joint_position.copy()
             self.get_logger().info("q_cmd initialized from joint states.")
 
-    def target_arm_ee_callback(self, msg: PoseStamped):
-        self.latest_target_pose = np.array([
-            msg.pose.position.x,
-            msg.pose.position.y,
-            msg.pose.position.z,
-            msg.pose.orientation.x,
-            msg.pose.orientation.y,
-            msg.pose.orientation.z,
-            msg.pose.orientation.w
-        ])
-        
-        self.get_logger().info(f"Target pose received")
-
     def __update_state(self):
         if self.lates_joint_position is not None:
             self.x[:self.orthopus.nq] = self.lates_joint_position
         else:
             self.get_logger().warn("No joint received yet from joint_states")
-
-        if self.latest_target_pose is not None:
-            self.target_pose = self.latest_target_pose
-        else:
-            self.target_pose = np.array([0.2, 0.3, 0.4, 1., 0., 0.2, 0.])
-
 
     '''def __state_observer(self):
 
@@ -388,25 +395,19 @@ class MpcControllerNode(Node):
         print("integrated state:", self.x)
         #if new callback value:
         #    self.x = callback'''
-    
-
 
     def __update_command(self):
         # Reference trajectory for MPC cost
         cost_coefs_refs = self.orthopus.extract_cost_coefs(self.cost_coefs)
-        r1 = 0.4
-        #target_traj_arm = np.array([0.2, 0.3, 0.7])
-        print("Pose_ref:", self.target_pose)
+        r1 = 0.5
         ref = np.hstack((
                 cost_coefs_refs, 
                 r1*np.zeros((self.orthopus.traj_base_len)), 
-                self.target_pose, #r1*np.ones((self.orthopus.traj_arm_len)), 
+                r1*np.ones((self.orthopus.traj_arm_len)), 
                 r1*np.zeros((self.orthopus.target_len)), 
                 r1*np.zeros((self.orthopus.obstacles_len))
             ))
-        print("Ref: ", ref )     
-        print("Current position:", self.orthopus.T_effector(self.x))  
-        print("Target position:", self.orthopus.T_effector_target(self.target_pose))   
+        print("Ref: ", ref )        
         refs = []
         for j in range(self.horizon+1):
             refs.append(ref)
@@ -418,25 +419,35 @@ class MpcControllerNode(Node):
 
         self.u = u_mpc[0]
 
-
     def __pub_command(self):
        
         # Publish the integrated command u
        if self.q_cmd is None:
             return
+       
+       #q_cmd_gazebo = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.2]) #0.5 * np.ones(7) #[self.q_cmd[i] for i in self.inv_idx_map]
 
        cmd_msg = Float64MultiArray()
-       cmd_msg.data = self.q_cmd[:6].tolist() + [0.0]
+       #cmd_msg.data = q_cmd_gazebo.tolist() #self.q_cmd.tolist()
+       cmd_msg.data = self.q_cmd[:6].tolist() + [0.0] #self.q_cmd.tolist()
        self.publisher_pos.publish(cmd_msg)
-       
 
     def __controller_callback(self):
         self.__update_state()
 
+        '''if self.q_cmd is not None:
+            # Integrate velocities into position
+            self.q_cmd = self.q_cmd + self.u * self.__controller_time_period
+
+        self.__pub_command()'''
         # Integrate velocity to get position command
         if self.u is not None and self.q_cmd is not None:
             alpha = 0.5
             self.q_cmd = self.q_cmd + alpha * self.u * self.__controller_time_period
+           
+
+            # Clip to joint limits to avoid instability
+            #self.q_cmd = 20.0 * np.ones(self.orthopus.nx) # np.clip(self.q_cmd, self.orthopus.lbx, self.orthopus.ubx)
 
         self.__pub_command()
 
